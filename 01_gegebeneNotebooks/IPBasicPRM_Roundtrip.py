@@ -72,60 +72,60 @@ class BasicPRM(IPPRMBase.PRMBase):
             
             nodeID += 1
             
-    @IPPerfMonitor
-    def planPath(self, startList, goalList, config):
-        """
+    # @IPPerfMonitor
+    # def planPath(self, startList, goalList, config):
+    #     """
         
-        Args:
-            start (array): start position in planning space
-            goal (array) : goal position in planning space
-            config (dict): dictionary with the needed information about the configuration options
+    #     Args:
+    #         start (array): start position in planning space
+    #         goal (array) : goal position in planning space
+    #         config (dict): dictionary with the needed information about the configuration options
             
-        Example:
+    #     Example:
         
-            config["radius"]   = 5.0
-            config["numNodes"] = 300
-            config["useKDTree"] = True
+    #         config["radius"]   = 5.0
+    #         config["numNodes"] = 300
+    #         config["useKDTree"] = True
             
-            startList = [[1,1]]
-            goalList  = [[10,1]]
+    #         startList = [[1,1]]
+    #         goalList  = [[10,1]]
             
-            instance.planPath(startList,goalList,config)
+    #         instance.planPath(startList,goalList,config)
         
-        """
-        # 0. reset
-        self.graph.clear()
+    #     """
+    #     # 0. reset
+    #     self.graph.clear()
         
-        # 1. check start and goal whether collision free (s. BaseClass)
-        checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
+    #     # 1. check start and goal whether collision free (s. BaseClass)
+    #     checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
         
-        # 2. learn Roadmap
-        self._learnRoadmapNearestNeighbour(config["radius"],config["numNodes"])
+    #     # 2. learn Roadmap
+    #     self._learnRoadmapNearestNeighbour(config["radius"],config["numNodes"])
 
-        # 3. find connection of start and goal to roadmap
-        # find nearest, collision-free connection between node on graph and start
-        result = self._nearestNeighbours(checkedStartList[0], config["radius"])
-        for node in result:
-            if not self._collisionChecker.lineInCollision(checkedStartList[0],node[1]['pos']):
-                 self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
-                 self.graph.add_edge("start", node[0])
-                 break
+    #     # 3. find connection of start and goal to roadmap
+    #     # find nearest, collision-free connection between node on graph and start
+    #     result = self._nearestNeighbours(checkedStartList[0], config["radius"])
+    #     for node in result:
+    #         if not self._collisionChecker.lineInCollision(checkedStartList[0],node[1]['pos']):
+    #              self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
+    #              self.graph.add_edge("start", node[0])
+    #              break
 
-        result = self._nearestNeighbours(checkedGoalList[0], config["radius"])
-        for node in result:
-            if not self._collisionChecker.lineInCollision(checkedGoalList[0],node[1]['pos']):
-                 self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
-                 self.graph.add_edge("goal", node[0])
-                 break
+    #     result = self._nearestNeighbours(checkedGoalList[0], config["radius"])
+    #     for node in result:
+    #         if not self._collisionChecker.lineInCollision(checkedGoalList[0],node[1]['pos']):
+    #              self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
+    #              self.graph.add_edge("goal", node[0])
+    #              break
 
-        try:
-            path = nx.shortest_path(self.graph,"start","goal")
-        except:
-            return []
-        return path
+    #     try:
+    #         path = nx.shortest_path(self.graph,"start","goal")
+    #     except:
+    #         return []
+    #     return path
     
     @IPPerfMonitor
-    def planRoundPath(self, startList, goalList, config):
+    def planRoundPath(self, startList,interimGoalList, goalList, config):
         """
         
         Args:
@@ -149,8 +149,12 @@ class BasicPRM(IPPRMBase.PRMBase):
         self.graph.clear()
         
         # 1. check start and goal whether collision free (s. BaseClass)
-        checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
+        checkedStartList, checkedInterimGoalList, checkedGoalList = self._checkStartGoal(startList,interimGoalList, goalList)
         
+        print(checkedStartList)
+        print(checkedInterimGoalList)
+        print(checkedGoalList)
+
         # 2. learn Roadmap
         self._learnRoadmapNearestNeighbour(config["radius"],config["numNodes"])
 
@@ -162,7 +166,14 @@ class BasicPRM(IPPRMBase.PRMBase):
                  self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
                  self.graph.add_edge("start", node[0])
                  break
-
+        
+        result = self._nearestNeighbours(checkedInterimGoalList[0], config["radius"])
+        for node in result:
+            if not self._collisionChecker.lineInCollision(checkedInterimGoalList[0],node[1]['pos']):
+                 self.graph.add_node("interim", pos=checkedInterimGoalList[0], color='lightgreen')
+                 self.graph.add_edge("interim", node[0])
+                 break
+        
         result = self._nearestNeighbours(checkedGoalList[0], config["radius"])
         for node in result:
             if not self._collisionChecker.lineInCollision(checkedGoalList[0],node[1]['pos']):
@@ -171,7 +182,7 @@ class BasicPRM(IPPRMBase.PRMBase):
                  break
 
         try:
-            path = nx.shortest_path(self.graph,"start","goal")
+            path = nx.shortest_path(self.graph,"start", "goal") + nx.shortest_path(self.graph,"goal", "interim") + nx.shortest_path(self.graph,"interim", "start")
         except:
             return []
         return path

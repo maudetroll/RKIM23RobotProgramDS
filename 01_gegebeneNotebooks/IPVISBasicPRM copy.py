@@ -53,13 +53,6 @@ def basicPRMVisualize(planner, solution, ax = None, nodeSize = 300):
         nx.draw_networkx_labels(graph,pos,labels={"start": "S"},  ax = ax)
 
 
-    if "interim" in graph.nodes():
-        nx.draw_networkx_nodes(graph,pos,nodelist=["interim"],
-                                   node_size=300,
-                                   node_color='#DD00DA',  ax = ax)
-        nx.draw_networkx_labels(graph,pos,labels={"interim": "I"},  ax = ax)
-
-
     if "goal" in graph.nodes():
         nx.draw_networkx_nodes(graph,pos,nodelist=["goal"],
                                    node_size=300,

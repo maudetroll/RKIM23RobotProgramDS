@@ -85,7 +85,7 @@ class VisPRM(PRMBase):
             nodeNumber += 1
 
     @IPPerfMonitor
-    def planPath(self, startList, goalList, config):
+    def planRoundPath(self, startList, interimGoalList, goalList, config):
         """
         
         Args:
@@ -102,7 +102,7 @@ class VisPRM(PRMBase):
         self.graph.clear()
         
         # 1. check start and goal whether collision free (s. BaseClass)
-        checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
+        checkedStartList, checkedInterimGoalList, checkedGoalList = self._checkStartGoal(startList, interimGoalList, goalList)
         
         # 2. learn Roadmap
         self._learnRoadmap(config["ntry"])
@@ -119,6 +119,13 @@ class VisPRM(PRMBase):
                  self.graph.add_edge("start", list(posList.keys())[node])
                  break
 
+        result = kdTree.query(checkedInterimGoalList[0],k=5)
+        for node in result[1]:
+            if not self._collisionChecker.lineInCollision(checkedInterimGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
+                 self.graph.add_node("interim", pos=checkedInterimGoalList[0], color='lightgreen')
+                 self.graph.add_edge("interim", list(posList.keys())[node])
+                 break
+
         result = kdTree.query(checkedGoalList[0],k=5)
         for node in result[1]:
             if not self._collisionChecker.lineInCollision(checkedGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
@@ -127,7 +134,7 @@ class VisPRM(PRMBase):
                  break
 
         try:
-            path = nx.shortest_path(self.graph,"start","goal")
+            path = nx.shortest_path(self.graph,"start", " interim", "goal")
         except:
             return []
         return path

@@ -8,7 +8,7 @@ License is based on Creative Commons: Attribution-NonCommercial 4.0 Internationa
 
 class Benchmark(object):
         
-    def __init__(self, name, collisionChecker, startList,interimGoalList, goalList, description, level ):
+    def __init__(self, name, collisionChecker, startList, goalList, description, level ):
         """Benchmark is used to define tests cases
         
         :name: Name of benchmark
@@ -21,7 +21,6 @@ class Benchmark(object):
         self.name = name
         self.collisionChecker = collisionChecker # environment (collision checker) 
         self.startList = startList # in limits, collision-free?
-        self.interimGoalList = interimGoalList
         self.goalList = goalList # in limits, collision-free?
         self.description = description
         self.level = level # in [1,2,3,4]

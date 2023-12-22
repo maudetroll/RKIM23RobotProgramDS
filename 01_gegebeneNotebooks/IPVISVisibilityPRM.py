@@ -39,8 +39,14 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
     if "start" in graph.nodes(): 
         nx.draw_networkx_nodes(graph,pos,nodelist=["start"],
                                    node_size=nodeSize,
-                                   node_color='#00dd00',  ax = ax)
+                                   node_color='#DD00DA',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={"start": "S"},  ax = ax)
+
+    if "interim" in graph.nodes(): 
+        nx.draw_networkx_nodes(graph,pos,nodelist=["interim"],
+                                    node_size=nodeSize,
+                                    node_color='#00dd00',  ax = ax)
+        nx.draw_networkx_labels(graph,pos,labels={"interim": "I"},  ax = ax)
 
 
     if "goal" in graph.nodes():

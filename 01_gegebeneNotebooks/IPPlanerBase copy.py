@@ -19,7 +19,7 @@ class PlanerBase(object):
         """
         self._collisionChecker = collisionChecker
 
-    def _checkStartGoal(self, startList, interimGoalList, goalList):
+    def _checkStartGoal(self, startList, goalList):
         """Basic check for start and goal
         
         Args:
@@ -35,14 +35,6 @@ class PlanerBase(object):
             if self._collisionChecker.pointInCollision(start):
                 continue
             newStartList.append(start)
-        
-        newInterimGoalList = list()
-        for interim in interimGoalList:
-            if (len(interim) != self._collisionChecker.getDim()):
-                continue
-            if self._collisionChecker.pointInCollision(interim):
-                continue
-            newInterimGoalList.append(interim)
 
         newGoalList = list()
         for goal in goalList:
@@ -54,9 +46,7 @@ class PlanerBase(object):
                         
         if len(newStartList) == 0:
             raise Exception("No valid start")
-        if len(newInterimGoalList) == 0:
-            raise Exception("No valid interim")
         if len(newGoalList) == 0:
             raise Exception("No valid goal")
     
-        return newStartList,newInterimGoalList, newGoalList
+        return newStartList, newGoalList
