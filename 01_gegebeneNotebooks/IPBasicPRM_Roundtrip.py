@@ -65,13 +65,14 @@ class BasicPRM(IPPRMBase.PRMBase):
             # for all nearest neighbours check whether a connection is possible
             for data in result:
                 if self._inSameConnectedComponent(nodeID,data[0]):
-                    break
+                    continue
                 
                 if not self._collisionChecker.lineInCollision(newNodePos,data[1]['pos']):
                     self.graph.add_edge(nodeID,data[0])
             
             nodeID += 1
-            
+
+
     # @IPPerfMonitor
     # def planPath(self, startList, goalList, config):
     #     """
@@ -166,23 +167,24 @@ class BasicPRM(IPPRMBase.PRMBase):
                  self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
                  self.graph.add_edge("start", node[0])
                  break
-        
+
         result = self._nearestNeighbours(checkedInterimGoalList[0], config["radius"])
         for node in result:
             if not self._collisionChecker.lineInCollision(checkedInterimGoalList[0],node[1]['pos']):
                  self.graph.add_node("interim", pos=checkedInterimGoalList[0], color='lightgreen')
                  self.graph.add_edge("interim", node[0])
                  break
-        
+
         result = self._nearestNeighbours(checkedGoalList[0], config["radius"])
         for node in result:
             if not self._collisionChecker.lineInCollision(checkedGoalList[0],node[1]['pos']):
                  self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
                  self.graph.add_edge("goal", node[0])
                  break
-
+        
         try:
-            path = nx.shortest_path(self.graph,"start", "goal") + nx.shortest_path(self.graph,"goal", "interim") + nx.shortest_path(self.graph,"interim", "start")
+            path = nx.shortest_path(self.graph,"start", "interim") + nx.shortest_path(self.graph,"interim", "goal")
+            print(path)
         except:
             return []
         return path
