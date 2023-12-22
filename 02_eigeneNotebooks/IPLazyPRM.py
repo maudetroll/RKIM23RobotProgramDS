@@ -79,7 +79,7 @@ class LazyPRM(PRMBase):
         return False
         
     @IPPerfMonitor   
-    def planPath(self, startList, goalList, config):
+    def planRoundPath(self, startList, goalList, config):
         """
         
         Args:
