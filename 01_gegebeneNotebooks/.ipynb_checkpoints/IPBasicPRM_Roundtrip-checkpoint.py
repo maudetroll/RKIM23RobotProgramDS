@@ -96,11 +96,6 @@ class BasicPRM(IPPRMBase.PRMBase):
         # 0. reset
         self.graph.clear()
         
-        print("Startlist")
-        print(startList)
-        
-        print("Goallist")
-        print(goalList)
         # 1. check start and goal whether collision free (s. BaseClass)
         checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
         
@@ -122,9 +117,6 @@ class BasicPRM(IPPRMBase.PRMBase):
                  self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
                  self.graph.add_edge("goal", node[0])
                  break
-                    
-        #nodes_list = list(self.graph.nodes().pos)
-        #print(nodes_list)
 
         try:
             path = nx.shortest_path(self.graph,"start","goal")
@@ -132,10 +124,8 @@ class BasicPRM(IPPRMBase.PRMBase):
             return []
         return path
     
-    
-        
     @IPPerfMonitor
-    def planPathRound(self, startList, goalList, config):
+    def planRoundPath(self, startList, goalList, config):
         """
         
         Args:
@@ -157,7 +147,7 @@ class BasicPRM(IPPRMBase.PRMBase):
         """
         # 0. reset
         self.graph.clear()
-
+        
         # 1. check start and goal whether collision free (s. BaseClass)
         checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
         
@@ -173,21 +163,15 @@ class BasicPRM(IPPRMBase.PRMBase):
                  self.graph.add_edge("start", node[0])
                  break
 
-        #self.graph.add_node(100,pos=checkedGoalList[0], color = 'red')
-        
-        result = self._nearestNeighbours(checkedStartList[0], config["radius"])
+        result = self._nearestNeighbours(checkedGoalList[0], config["radius"])
         for node in result:
-            if not self._collisionChecker.lineInCollision(checkedStartList[0],node[1]['pos']):
-                 self.graph.add_node("goal", pos=checkedStartList[0], color='lightgreen')
+            if not self._collisionChecker.lineInCollision(checkedGoalList[0],node[1]['pos']):
+                 self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
                  self.graph.add_edge("goal", node[0])
                  break
-                    
-        #nodes_list = list(self.graph.nodes().pos)
-        #print(nodes_list)
 
         try:
             path = nx.shortest_path(self.graph,"start","goal")
         except:
-            print("Fehler bei Pfad erzeugung im Try Block")
             return []
         return path
