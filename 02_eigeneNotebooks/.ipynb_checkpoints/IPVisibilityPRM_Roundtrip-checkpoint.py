@@ -119,13 +119,19 @@ class VisPRM(PRMBase):
                  self.graph.add_edge("start", list(posList.keys())[node])
                  break
 
-        result = kdTree.query(checkedInterimGoalList[0],k=5)
-        for node in result[1]:
-            if not self._collisionChecker.lineInCollision(checkedInterimGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
-                 self.graph.add_node("interim", pos=checkedInterimGoalList[0], color='lightgreen')
-                 self.graph.add_edge("interim", list(posList.keys())[node])
-                 break
-
+        for interimGoal in range(len(checkedInterimGoalList)):
+            print("InterimGoal: " + str(interimGoal))
+            print("Was steht in der Liste: " + str(checkedInterimGoalList[interimGoal]))
+            result = kdTree.query(checkedInterimGoalList[interimGoal],k=5)
+            
+            nameOfNode = "interim" + str(interimGoal)
+            for node in result[1]:
+                if not self._collisionChecker.lineInCollision(checkedInterimGoalList[interimGoal],self.graph.nodes()[list(posList.keys())[node]]['pos']):
+                     self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal], color='lightgreen')
+                     self.graph.add_edge(nameOfNode, list(posList.keys())[node])
+                     break
+                    
+                    
         result = kdTree.query(checkedGoalList[0],k=5)
         for node in result[1]:
             if not self._collisionChecker.lineInCollision(checkedGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
@@ -133,8 +139,12 @@ class VisPRM(PRMBase):
                  self.graph.add_edge("goal", list(posList.keys())[node])
                  break
 
+                    
+        print(self.graph.nodes())        
         try:
-            path = nx.shortest_path(self.graph,"start", "interim") + nx.shortest_path(self.graph,"interim", "goal")
+            path = nx.shortest_path(self.graph,"start", "interim0") + nx.shortest_path(self.graph,"interim0", "interim1")+   nx.shortest_path(self.graph,"interim1", "goal")
+            
+            print(path)
         except:
             return []
         return path

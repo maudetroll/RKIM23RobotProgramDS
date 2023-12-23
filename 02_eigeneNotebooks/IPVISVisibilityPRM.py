@@ -23,7 +23,7 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
     # draw graph (nodes colorized by degree)
     nx.draw(graph, pos = pos, nodelist=color.keys(), node_color = color.values(), ax=ax)   
     nx.draw_networkx_edges(graph,pos,
-                               edge_color='b',
+                               edge_color='r',
                                width=3.0, ax=ax
                             )
    
@@ -39,14 +39,36 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
     if "start" in graph.nodes(): 
         nx.draw_networkx_nodes(graph,pos,nodelist=["start"],
                                    node_size=nodeSize,
-                                   node_color='#DD00DA',  ax = ax)
+                                   node_color='#00dd00',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={"start": "S"},  ax = ax)
 
-    if "interim" in graph.nodes(): 
-        nx.draw_networkx_nodes(graph,pos,nodelist=["interim"],
+#    if "interim0" in graph.nodes(): 
+#        nx.draw_networkx_nodes(graph,pos,nodelist=["interim0"],
+#                                    node_size=nodeSize,
+#                                    node_color='#DD00DA',  ax = ax)
+#        nx.draw_networkx_labels(graph,pos,labels={"interim0": "I"},  ax = ax)
+    
+#    if "interim1" in graph.nodes(): 
+#        nx.draw_networkx_nodes(graph,pos,nodelist=["interim1"],
+#                                    node_size=nodeSize,
+#                                    node_color='#DD00DA',  ax = ax)
+#        nx.draw_networkx_labels(graph,pos,labels={"interim1": "I"},  ax = ax)
+        
+
+    # Count the amount of interims in Node of the main graph
+    nodesToString= str(planner.graph.nodes())
+    amountIterims = nodesToString.count('interim')
+    
+    # loop to visualize the interims in the plot
+    i = 0
+    for interim in range(amountIterims):
+        name = "interim" + str(i)
+        nx.draw_networkx_nodes(graph,pos,nodelist=[name],
                                     node_size=nodeSize,
                                     node_color='#DD00DA',  ax = ax)
-        nx.draw_networkx_labels(graph,pos,labels={"interim": "I"},  ax = ax)
+        nx.draw_networkx_labels(graph,pos,labels={name: "I"},  ax = ax)
+        i += 1
+
 
 
     if "goal" in graph.nodes():

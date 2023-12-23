@@ -27,7 +27,7 @@ trapField = dict()
 trapField["obs1"] =   LineString([(6, 18), (6, 8), (16, 8), (16,18)]).buffer(1.0)
 description = "Following the direct connection from goal to start would lead the algorithm into a trap."
 #benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[10,20]], [[10,15], [20,10]], [[10,1]], description, 2))
-benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[10,20]], [[20,10]], [[10,1]], description, 2))
+benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[10,20]], [[3,10],[20,10],[3,3]], [[10,1]], description, 2))
 
 # # -----------------------------------------
 # bottleNeckField = dict()
