@@ -53,11 +53,26 @@ def basicPRMVisualize(planner, solution, ax = None, nodeSize = 300):
         nx.draw_networkx_labels(graph,pos,labels={"start": "S"},  ax = ax)
 
 
-    if "interim" in graph.nodes():
-        nx.draw_networkx_nodes(graph,pos,nodelist=["interim"],
-                                   node_size=300,
-                                   node_color='#DD00DA',  ax = ax)
-        nx.draw_networkx_labels(graph,pos,labels={"interim": "I"},  ax = ax)
+    #if "interim" in graph.nodes():
+    #    nx.draw_networkx_nodes(graph,pos,nodelist=["interim"],
+    #                               node_size=300,
+    #                               node_color='#DD00DA',  ax = ax)
+    #    nx.draw_networkx_labels(graph,pos,labels={"interim": "I"},  ax = ax)
+        
+                        
+    # Count the amount of interims in Node of the main graph
+    nodesToString= str(planner.graph.nodes())
+    amountIterims = nodesToString.count('interim')
+    
+    # loop to visualize the interims in the plot
+    i = 0
+    for interim in range(amountIterims):
+        name = "interim" + str(i)
+        nx.draw_networkx_nodes(graph,pos,nodelist=[name],
+                                    node_size=nodeSize,
+                                    node_color='#DD00DA',  ax = ax)
+        nx.draw_networkx_labels(graph,pos,labels={name: "I"},  ax = ax)
+        i += 1
 
 
     if "goal" in graph.nodes():

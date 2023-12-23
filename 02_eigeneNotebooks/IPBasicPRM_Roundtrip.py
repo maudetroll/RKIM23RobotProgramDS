@@ -168,12 +168,27 @@ class BasicPRM(IPPRMBase.PRMBase):
                  self.graph.add_edge("start", node[0])
                  break
 
-        result = self._nearestNeighbours(checkedInterimGoalList[0], config["radius"])
-        for node in result:
-            if not self._collisionChecker.lineInCollision(checkedInterimGoalList[0],node[1]['pos']):
-                 self.graph.add_node("interim", pos=checkedInterimGoalList[0], color='lightgreen')
-                 self.graph.add_edge("interim", node[0])
-                 break
+        #result = self._nearestNeighbours(checkedInterimGoalList[0], config["radius"])
+        #for node in result:
+        #    if not self._collisionChecker.lineInCollision(checkedInterimGoalList[0],node[1]['pos']):
+        #         self.graph.add_node("interim", pos=checkedInterimGoalList[0], color='lightgreen')
+        #         self.graph.add_edge("interim", node[0])
+        #         break
+        
+        for interimGoal in range(len(checkedInterimGoalList)):
+            print("InterimGoal: " + str(interimGoal))
+            print("Was steht in der Liste: " + str(checkedInterimGoalList[interimGoal]))
+            result = self._nearestNeighbours(checkedInterimGoalList[interimGoal],config["radius"])
+            
+            nameOfNode = "interim" + str(interimGoal)
+            for node in result[1]:
+                if not self._collisionChecker.lineInCollision(checkedInterimGoalList[interimGoal],self.graph.nodes()[list(posList.keys())[node]]['pos']):
+                     self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal], color='lightgreen')
+                     self.graph.add_edge(nameOfNode, node[0])
+                     break
+
+            # edit: list(posList.keys())[node]
+            # edit aus Vis-Datei: self.graph.nodes()[list(posList.keys())[node]]['pos']
 
         result = self._nearestNeighbours(checkedGoalList[0], config["radius"])
         for node in result:
