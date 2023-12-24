@@ -142,8 +142,21 @@ class VisPRM(PRMBase):
                     
         print(self.graph.nodes())        
         try:
-            path = nx.shortest_path(self.graph,"start", "interim0") + nx.shortest_path(self.graph,"interim0", "interim1")+   nx.shortest_path(self.graph,"interim1", "goal")
-            
+            interim_count = len(checkedInterimGoalList)
+
+            # Connect Start with first interim
+            path = nx.shortest_path(self.graph, "start", "interim0")
+
+            # Connect all interims
+            for i in range(interim_count - 1):
+                interim_name_current = "interim" + str(i)
+                interim_name_next = "interim" + str(i + 1)
+                
+                path += nx.shortest_path(self.graph, interim_name_current, interim_name_next)
+                
+            # Connect last interim with goal
+            path += nx.shortest_path(self.graph, "interim" + str(interim_count - 1), "goal")
+
             print(path)
         except:
             return []

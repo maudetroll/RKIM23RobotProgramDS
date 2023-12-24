@@ -112,7 +112,22 @@ class LazyPRM(PRMBase):
         maxTry = 0
         while maxTry < 40: 
             try:
-                path = nx.shortest_path(self.graph,"start", "interim") + nx.shortest_path(self.graph, "interim", "goal")
+                interim_count = len(checkedInterimGoalList)
+
+                # Connect Start with first interim
+                path = nx.shortest_path(self.graph, "start", "interim0")
+
+                # Connect all interims
+                for i in range(interim_count - 1):
+                    interim_name_current = "interim" + str(i)
+                    interim_name_next = "interim" + str(i + 1)
+                    
+                    path += nx.shortest_path(self.graph, interim_name_current, interim_name_next)
+                    
+                # Connect last interim with goal
+                path += nx.shortest_path(self.graph, "interim" + str(interim_count - 1), "goal")
+
+                print(path)
             except:
                 self._buildRoadmap(config["updateRoadmapSize"], config["kNearest"])
                 maxTry += 1
