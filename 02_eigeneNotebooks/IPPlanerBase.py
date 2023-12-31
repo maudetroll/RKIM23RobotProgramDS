@@ -37,12 +37,11 @@ class PlanerBase(object):
             newStartList.append(start)
         
         newInterimGoalList = list()
-
         for interim in interimGoalList:
-            #if (len(interim) != self._collisionChecker.getDim()):
-             #   continue
-            #if self._collisionChecker.pointInCollision(interim):
-            #    continue
+            if (len(interim) != self._collisionChecker.getDim()):
+               continue
+            if self._collisionChecker.pointInCollision(interim):
+               continue
             newInterimGoalList.append(interim)
 
 

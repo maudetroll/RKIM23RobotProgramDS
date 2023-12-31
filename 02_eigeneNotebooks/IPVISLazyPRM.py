@@ -77,11 +77,29 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
                                    node_color='#00dd00',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={"start": "S"},  ax = ax)
 
-    if "interim" in graph.nodes(): 
-        nx.draw_networkx_nodes(graph,pos,nodelist=["interim"],
-                                   node_size=300,
-                                   node_color='#DD00DA',  ax = ax)
-        nx.draw_networkx_labels(graph,pos,labels={"interim": "I"},  ax = ax)
+    # if "interim" in graph.nodes(): 
+    #     nx.draw_networkx_nodes(graph,pos,nodelist=["interim"],
+    #                                node_size=300,
+    #                                node_color='#DD00DA',  ax = ax)
+    #     nx.draw_networkx_labels(graph,pos,labels={"interim": "I"},  ax = ax)
+
+    nodesToString= str(planner.graph.nodes())
+    amountIterims = nodesToString.count('interim')
+    
+    # loop to visualize the interims in the plot
+
+    print("Lazy Algorithmus")
+
+    i = 0
+    for interim in range(amountIterims):
+        print(i)
+        name = "interim" + str(i)
+        print(nx.get_node_attributes(graph,'pos'))
+        nx.draw_networkx_nodes(graph,pos,nodelist=[name],
+                                    node_size=nodeSize,
+                                    node_color='#DD00DA',  ax = ax)
+        nx.draw_networkx_labels(graph,pos,labels={name: "I"},  ax = ax)
+        i += 1
 
 
     if "goal" in graph.nodes():

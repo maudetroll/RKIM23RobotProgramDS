@@ -60,20 +60,40 @@ class LazyPRM(PRMBase):
         for nodeNumber in path:
             if self._collisionChecker.pointInCollision(self.graph.nodes[nodeNumber]['pos']):
                 self.graph.remove_node(nodeNumber)
+                
                 #print "Colliding Node"
                 return True
         
         # check all path segments
+            
+        x_old = ()
+        y_old = ()    
         for elem in zip(path,path[1:]):
             #print elem
             x = elem[0]
             y = elem[1]
+            print("Elem: "+ str(elem))
+            # if x == y:
+            #     self.graph.remove_edge(x,y)
+            #     self.collidingEdges.append((x,y))
+            #     if y_old == ():
+            #         self.graph.add_edge("start", x)
+            #     else:
+            #         self.graph.add_edge(y_old, x)
+
+            #     print("Kanten entfernt")
+
             if self._collisionChecker.lineInCollision(self.graph.nodes()[x]['pos'],self.graph.nodes()[y]['pos']):
                 self.graph.remove_edge(x,y)
                 self.collidingEdges.append((x,y))
                 return True
             else:
                 self.nonCollidingEdges.append((x,y))
+            
+            x_old = x
+            y_old = y
+
+        print("Colliding Edges= " + str(self.collidingEdges))
                                                                                           
             
         return False
@@ -103,7 +123,18 @@ class LazyPRM(PRMBase):
         
         # 2. add start and goal to graph
         self.graph.add_node("start", pos=checkedStartList[0])
-        self.graph.add_node("interim", pos=checkedInterimGoalList[0])
+        # self.graph.add_node("interim", pos=checkedInterimGoalList[0])
+
+        # Interim Liste erweitern
+        for interimGoal in range(len(checkedInterimGoalList)):
+            print("InterimGoal: " + str(interimGoal))
+            print("Was steht in der Liste: " + str(checkedInterimGoalList[interimGoal]))
+            
+            nameOfNode = "interim" + str(interimGoal)
+
+            self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal])
+            
+
         self.graph.add_node("goal", pos=checkedGoalList[0])
         
         # 3. build initial roadmap
@@ -126,19 +157,19 @@ class LazyPRM(PRMBase):
                     
                 # Connect last interim with goal
                 path += nx.shortest_path(self.graph, "interim" + str(interim_count - 1), "goal")
-
-                print(path)
+                  
             except:
                 self._buildRoadmap(config["updateRoadmapSize"], config["kNearest"])
                 maxTry += 1
                 continue
-              
+  
             if self._checkForCollisionAndUpdate(path):
                 continue
             else:
                 #print "Found solution"
+                print(f"Pfad= {path}")
                 return path
-            
+               
         return []
 
     
