@@ -36,13 +36,14 @@ class LazyPRM(PRMBase):
 
         # for every node in graph find nearest neigbhours
         posList = list(nx.get_node_attributes(self.graph,'pos').values())
-        #print posList
+        # print("poslist")
+        # print(posList)
         kdTree = cKDTree(posList)
         
         # to see when _buildRoadmap has to be called again
-        #print addedNodes
+        # print(addedNodes)
         for node in addedNodes:
-        #for node in self.graph.nodes():
+        # for node in self.graph.nodes():
         # Find set of candidates to connect to sorted by distance
             result = kdTree.query(self.graph.nodes[node]['pos'],k=kNearest)
             for data in result[1]:
@@ -61,7 +62,6 @@ class LazyPRM(PRMBase):
             if self._collisionChecker.pointInCollision(self.graph.nodes[nodeNumber]['pos']):
                 self.graph.remove_node(nodeNumber)
                 
-                #print "Colliding Node"
                 return True
         
         # check all path segments
@@ -72,28 +72,17 @@ class LazyPRM(PRMBase):
             #print elem
             x = elem[0]
             y = elem[1]
-            print("Elem: "+ str(elem))
-            # if x == y:
-            #     self.graph.remove_edge(x,y)
-            #     self.collidingEdges.append((x,y))
-            #     if y_old == ():
-            #         self.graph.add_edge("start", x)
-            #     else:
-            #         self.graph.add_edge(y_old, x)
-
-            #     print("Kanten entfernt")
 
             if self._collisionChecker.lineInCollision(self.graph.nodes()[x]['pos'],self.graph.nodes()[y]['pos']):
                 self.graph.remove_edge(x,y)
                 self.collidingEdges.append((x,y))
                 return True
             else:
-                self.nonCollidingEdges.append((x,y))
-            
-            x_old = x
-            y_old = y
+                # Verhindern damit Interim nicht mit sich selbst verbindet
+                if x != y:
+                    self.nonCollidingEdges.append((x,y))
 
-        print("Colliding Edges= " + str(self.collidingEdges))
+        # print("nonColliding Edges= " + str(self.nonCollidingEdges))
                                                                                           
             
         return False
@@ -127,8 +116,6 @@ class LazyPRM(PRMBase):
 
         # Interim Liste erweitern
         for interimGoal in range(len(checkedInterimGoalList)):
-            print("InterimGoal: " + str(interimGoal))
-            print("Was steht in der Liste: " + str(checkedInterimGoalList[interimGoal]))
             
             nameOfNode = "interim" + str(interimGoal)
 

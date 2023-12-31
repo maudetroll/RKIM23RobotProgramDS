@@ -88,13 +88,9 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
     
     # loop to visualize the interims in the plot
 
-    print("Lazy Algorithmus")
-
     i = 0
     for interim in range(amountIterims):
-        print(i)
         name = "interim" + str(i)
-        print(nx.get_node_attributes(graph,'pos'))
         nx.draw_networkx_nodes(graph,pos,nodelist=[name],
                                     node_size=nodeSize,
                                     node_color='#DD00DA',  ax = ax)
