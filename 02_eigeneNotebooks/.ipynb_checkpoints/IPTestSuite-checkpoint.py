@@ -17,62 +17,32 @@ import random
 
 benchList = list()
 
-# -----------------------------------------
-# trapField = dict()
-# trapField["obs1"] =   LineString([(6, 18), (6, 8), (16, 8), (16,18)]).buffer(1.0)
-# description = "Following the direct connection from goal to start would lead the algorithm into a trap."
-# benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[10,15]], [[10,1]], description, 2))
+
 
 # -----------------------------------------
 trapField = dict()
 trapField["obs1"] =   LineString([(6, 18), (6, 8), (16, 8), (16,18)]).buffer(1.0)
 description = "Following the direct connection from goal to start would lead the algorithm into a trap."
 #benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[10,20]], [[10,15], [20,10]], [[10,1]], description, 2))
-benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[10,15]], [[3,10],[20,10],[3,3],[20,15]], [[10,1]], description, 2))
+benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[10,15]], [[3,10],[22,8],[3,3],[20,15]], [[10,1]], description, 2))
 
-# # -----------------------------------------
-# bottleNeckField = dict()
-# bottleNeckField["obs1"] = LineString([(0, 13), (11, 13)]).buffer(.5)
-# bottleNeckField["obs2"] = LineString([(13, 13), (23,13)]).buffer(.5)
-# description = "Planer has to find a narrow passage."
-# benchList.append(Benchmark("Bottleneck", CollisionChecker(bottleNeckField), [[4,15]], [[18,1]], description, 2))
+
 
 # -----------------------------------------
 bottleNeckField = dict()
 bottleNeckField["obs1"] = LineString([(0, 13), (11, 13)]).buffer(.5)
 bottleNeckField["obs2"] = LineString([(13, 13), (23,13)]).buffer(.5)
 description = "Planer has to find a narrow passage."
-benchList.append(Benchmark("Bottleneck", CollisionChecker(bottleNeckField), [[4,15]],[[18,3]], [[18,1]], description, 2))
+benchList.append(Benchmark("Bottleneck", CollisionChecker(bottleNeckField), [[4,15]],[[18,3],[18,16],[4,4]],[[18,1]], description, 2))
 
-# # -----------------------------------------
-# fatBottleNeckField = dict()
-# fatBottleNeckField["obs1"] = Polygon([(0, 8), (11, 8),(11, 15), (0, 15)]).buffer(.5)
-# fatBottleNeckField["obs2"] = Polygon([(13, 8), (24, 8),(24, 15), (13, 15)]).buffer(.5)
-# description = "Planer has to find a narrow passage with a significant extend."
-# benchList.append(Benchmark("Fat bottleneck", CollisionChecker(fatBottleNeckField), [[4,21]], [[18,1]], description, 2))
+
 
 # -----------------------------------------
 fatBottleNeckField = dict()
 fatBottleNeckField["obs1"] = Polygon([(0, 8), (11, 8),(11, 15), (0, 15)]).buffer(.5)
 fatBottleNeckField["obs2"] = Polygon([(13, 8), (24, 8),(24, 15), (13, 15)]).buffer(.5)
 description = "Planer has to find a narrow passage with a significant extend."
-benchList.append(Benchmark("Fat bottleneck", CollisionChecker(fatBottleNeckField), [[4,21]], [[18,3]], [[18,1]], description, 2))
-
-# # -----------------------------------------
-# trapField = dict()
-# for i in range(10, 1300, 10) :
-#     radius = 1.0 * (i / 500.0)
-#     width = 1.0 * (i / 5000.0)
-#     trapField["obsA"+str(i/10)] = Point([(10 - np.cos(np.deg2rad(i))*radius, 10 - np.sin(np.deg2rad(i))*radius)]).buffer(width)
-#     trapField["obsB"+str(i/10)] = Point([(15 + np.sin(np.deg2rad(i))*radius, 15 + np.cos(np.deg2rad(i))*radius)]).buffer(width)
-# trapField["obsC"] = LineString([(5, 0.5), (5, 10), (15, 20), (20,20)]).buffer(0.5)
-
-# start = [[10,10]]
-# interim = [[10, 9]]
-# goal = [[15,15]]
-
-# description = "Two spirals block the way from start to goal."
-# benchList.append(Benchmark("Spirals", CollisionChecker(trapField), start,interim, goal, description, 4))
+benchList.append(Benchmark("Fat bottleneck", CollisionChecker(fatBottleNeckField), [[4,21]], [[18,4],[4,4],[18,16]], [[18,1]], description, 2))
 
 ### BE RUSH
 
@@ -105,25 +75,25 @@ benchList.append(Benchmark("B_rush",CollisionChecker(simpleField),[[1,17.7]],[[1
 
 
 
-### not special 
+### FunFunFun 
 
-not_special = dict()
-not_special["base"] = Point(11,20.55).buffer(2.4)
-not_special["arms"] = LineString([(11.65,17.65),(11.65,10.5)]).buffer(0.5)
-not_special["arms2"] = LineString([(11.65,8.5),(11.65,0)]).buffer(0.5)
-not_special["obs1"] = LineString([(12.7, 8), (18, 8), (18, 12), (14,12)]).buffer(0.5)
-not_special["obs2"] = LineString([(15, 14), (20, 14), (20, 10),(23,10)]).buffer(0.5)
-not_special["obs3"] = LineString([(0, 18), (5, 18), (5, 20)]).buffer(0.5)
-not_special["obs4"] = LineString([(15, 5), (20, 5), (20, 8)]).buffer(0.5)
-for i in range(15):
-    target1 = (11-1.2*i,18-1.4*i)
-    not_special["partA"+str(i)] = LineString([(11,18-1*i), target1 ]).buffer(0.1)
-for i in range(5):
-    target1 = (20-1.2*i,25-2*i)
-    not_special["partB"+str(i)] = LineString([(20,22-1*i), target1 ]).buffer(0.1)
+#not_special = dict()
+#not_special["base"] = Point(11,20.55).buffer(2.4)
+#not_special["arms"] = LineString([(11.65,17.65),(11.65,10.5)]).buffer(0.5)
+#not_special["arms2"] = LineString([(11.65,8.5),(11.65,0)]).buffer(0.5)
+#not_special["obs1"] = LineString([(12.7, 8), (18, 8), (18, 12), (14,12)]).buffer(0.5)
+#not_special["obs2"] = LineString([(15, 14), (20, 14), (20, 10),(23,10)]).buffer(0.5)
+#not_special["obs3"] = LineString([(0, 18), (5, 18), (5, 20)]).buffer(0.5)
+#not_special["obs4"] = LineString([(15, 5), (20, 5), (20, 8)]).buffer(0.5)
+#for i in range(15):
+#    target1 = (11-1.2*i,18-1.4*i)
+##    not_special["partA"+str(i)] = LineString([(11,18-1*i), target1 ]).buffer(0.1)
+#for i in range(5):
+#    target1 = (20-1.2*i,25-2*i)
+#    not_special["partB"+str(i)] = LineString([(20,22-1*i), target1 ]).buffer(0.1)
 
-description = "Find the proper path!"
-benchList.append(Benchmark("FunFunFun",CollisionChecker(not_special),[[1,20]],[[3,8],[2,13],[17,3]],[[20,1]],description,2))
+#description = "Find the proper path!"
+#benchList.append(Benchmark("FunFunFun",CollisionChecker(not_special),[[1,20]],[[3,8],[2,13],[17,3]],[[20,1]],description,2))
 
 
 ### Circle of Death
@@ -146,4 +116,4 @@ for i in range(circle_anz):
     draw["sol_1"+str(i)] = calc["dif"+str(i)]
 
 description = "Find the path"
-benchList.append(Benchmark("circle od death", CollisionChecker(draw), [mid],[[1,2]],[[1,1]], description, 2))
+benchList.append(Benchmark("circle od death", CollisionChecker(draw), [mid],[[10,4.5],[10,7.5],[20,3]],[[1,1]], description, 2))

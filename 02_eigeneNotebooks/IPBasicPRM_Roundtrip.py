@@ -21,6 +21,7 @@ class BasicPRM(IPPRMBase.PRMBase):
     def __init__(self, _collChecker):
         super(BasicPRM, self).__init__(_collChecker)
         self.graph = nx.Graph()
+        self.reachedInterims = [] 
 
     
     @IPPerfMonitor
@@ -42,11 +43,48 @@ class BasicPRM(IPPRMBase.PRMBase):
         **radius** """
 
         result = list()
+
         for node in self.graph.nodes(data=True):
             if euclidean(node[1]['pos'],pos) <= radius:
                 result.append(node)
-
+                
         return result
+    @IPPerfMonitor
+    def _nearestInterim(self,checkedStartList,checkedInterimGoalList,checkedGoalList,pos):
+        
+        result_interim = list()
+#        for node in self.graph.nodes(data=True):              
+#            if 'interim' in str(node[0]):
+#                result_interim.append(node)
+                #
+#            print(str(euclidean(node[1]['pos'],pos)))
+        #for node in checkedInterimGoalList:
+        #    euclidean(node[1]['pos'],pos)
+        
+        print(str(checkedInterimGoalList))
+        
+        # wie wolln wir vorgehen
+        
+        # schleife die schaut was von anderen Interims der nächste ist
+        # kann interium Punkt 1 ohne Kollision zum nächsten
+        # falls JA: -> fügs in die liste ein -> dann ist das der shortest Path
+        # falls Nein: wiederhole das und machs beim näctsen
+        # wenn kein Interium mit den Bedgingungen gefunden wird, verbinde Node mit nächstem Interim auch wenn der Kollidiert
+        
+        # Neue Idee:
+        
+        # 1. Ausgabe Pfad von Start bis nähestes Interim
+        # 2. Wir nehmen dann die erste Node aus dem Pfad, nach Start (Node A)
+        # 3. Dann rufen wir nearest Neighbour, wir wollen den Abstand von der aktuellen Node allen Interiums
+        # 3b. Abgleichen mit Liste die schon abgehakt ist, wegschmeißen der Interium die schon verplant sind
+        # 4. Interim mit dem kleinesten Abstand wird das nächste ZWischenziel -> Interim B
+        # 5. nx.shorestPath (Node A, Interim B)
+        # 6. gehe wieder zu 2
+
+
+                
+        return result_interim
+    
     
     @IPPerfMonitor
     def _learnRoadmapNearestNeighbour(self, radius, numNodes):
@@ -71,59 +109,6 @@ class BasicPRM(IPPRMBase.PRMBase):
                     self.graph.add_edge(nodeID,data[0])
             
             nodeID += 1
-
-
-    # @IPPerfMonitor
-    # def planPath(self, startList, goalList, config):
-    #     """
-        
-    #     Args:
-    #         start (array): start position in planning space
-    #         goal (array) : goal position in planning space
-    #         config (dict): dictionary with the needed information about the configuration options
-            
-    #     Example:
-        
-    #         config["radius"]   = 5.0
-    #         config["numNodes"] = 300
-    #         config["useKDTree"] = True
-            
-    #         startList = [[1,1]]
-    #         goalList  = [[10,1]]
-            
-    #         instance.planPath(startList,goalList,config)
-        
-    #     """
-    #     # 0. reset
-    #     self.graph.clear()
-        
-    #     # 1. check start and goal whether collision free (s. BaseClass)
-    #     checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
-        
-    #     # 2. learn Roadmap
-    #     self._learnRoadmapNearestNeighbour(config["radius"],config["numNodes"])
-
-    #     # 3. find connection of start and goal to roadmap
-    #     # find nearest, collision-free connection between node on graph and start
-    #     result = self._nearestNeighbours(checkedStartList[0], config["radius"])
-    #     for node in result:
-    #         if not self._collisionChecker.lineInCollision(checkedStartList[0],node[1]['pos']):
-    #              self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
-    #              self.graph.add_edge("start", node[0])
-    #              break
-
-    #     result = self._nearestNeighbours(checkedGoalList[0], config["radius"])
-    #     for node in result:
-    #         if not self._collisionChecker.lineInCollision(checkedGoalList[0],node[1]['pos']):
-    #              self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
-    #              self.graph.add_edge("goal", node[0])
-    #              break
-
-    #     try:
-    #         path = nx.shortest_path(self.graph,"start","goal")
-    #     except:
-    #         return []
-    #     return path
     
     @IPPerfMonitor
     def planRoundPath(self, startList,interimGoalList, goalList, config):
@@ -152,9 +137,9 @@ class BasicPRM(IPPRMBase.PRMBase):
         # 1. check start and goal whether collision free (s. BaseClass)
         checkedStartList, checkedInterimGoalList, checkedGoalList = self._checkStartGoal(startList,interimGoalList, goalList)
         
-        print(checkedStartList)
-        print(checkedInterimGoalList)
-        print(checkedGoalList)
+        #print(checkedStartList)
+        #print(checkedInterimGoalList)
+        #print(checkedGoalList)
 
         # 2. learn Roadmap
         self._learnRoadmapNearestNeighbour(config["radius"],config["numNodes"])
@@ -166,13 +151,18 @@ class BasicPRM(IPPRMBase.PRMBase):
             if not self._collisionChecker.lineInCollision(checkedStartList[0],node[1]['pos']):
                  self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
                  self.graph.add_edge("start", node[0])
-                 break                
+                 break
+        #print("InteriumListe:" + str(result_interim))
+        
+        
+
 
         for interimGoal in range(len(checkedInterimGoalList)):
             print("InterimGoal: " + str(interimGoal))
             print("Was steht in der Liste: " + str(checkedInterimGoalList[interimGoal]))
-            result = self._nearestNeighbours(checkedInterimGoalList[interimGoal],config["radius"])
             
+            result = self._nearestNeighbours(checkedInterimGoalList[interimGoal],config["radius"])
+            result_interim = self._nearestInterim(checkedInterimGoalList[interimGoal])
             nameOfNode = "interim" + str(interimGoal)
 
             for node in result:
@@ -192,6 +182,8 @@ class BasicPRM(IPPRMBase.PRMBase):
             
             interim_count = len(checkedInterimGoalList)
 
+            # Calc shortest Path To Interium 
+            
             # Connect Start with first interim
             path = nx.shortest_path(self.graph, "start", "interim0")
 
@@ -209,3 +201,15 @@ class BasicPRM(IPPRMBase.PRMBase):
         except:
             return []
         return path
+    
+    
+   # def shortenPathToInterium(self,result):
+        # finde nearste Neighbour zu aktueller Node
+        #nextinterim = self.graph.node
+        
+        # nearestinterim = Interimsname (e.g. interium2) and return object
+       # nearestinterim
+        
+      #  nextnode =
+        
+      #  return nearestinterim
