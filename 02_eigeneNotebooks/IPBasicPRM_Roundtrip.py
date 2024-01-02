@@ -49,10 +49,54 @@ class BasicPRM(IPPRMBase.PRMBase):
                 result.append(node)
                 
         return result
+    
     @IPPerfMonitor
-    def _nearestInterim(self,checkedStartList,checkedInterimGoalList,checkedGoalList,pos):
+    def _nearestInterim(self,currentNode,checkedInterimGoalList, checkedGoalList):
         
-        result_interim = list()
+        #result_interim = [list(),list(),list()]
+        result_interim = [[],[],[]]
+        # Liste 1: Koordinaten
+        # Liste 2: Abstand
+        # Liste 3: Namen
+        
+        #print("currentNode:" +str(currentNode)+ str(type(currentNode)))
+        #make one list containing all goal/points to reach
+        #for i in range(len(checkedGoalList)):
+            #checkedInterimGoalList.append(i)
+        #print("CheckedInterimLIst " + str(checkedInterimGoalList))
+        
+        #print("InterimListeaddiert"+ str(checkedInterimGoalList))
+        i = 0
+        for next_pos_node in checkedInterimGoalList:
+            #print("test")
+            #print("current X :" + str(currentNode[0]) + "Y" + str(currentNode[1]))
+            #print("next X :" + str(next_pos_node[0]) + "Y" + str(next_pos_node[1]))
+            point_current = (currentNode[0] , currentNode[1])
+            point_pos_next = (next_pos_node[0],next_pos_node[1])
+
+            #print("Abstand" + str(euclidean(point_current,point_pos_next)))
+            result_interim[0].append(next_pos_node)
+            result_interim[1].append(euclidean(point_current,point_pos_next))
+            i += 1
+            
+       
+        # Ordne den nächsten Punkten einen Namen zu
+        for nearest in result_interim[0]:
+            for node, attributes in self.graph.nodes(data=True):
+                if "pos" in attributes:
+                    if nearest == attributes["pos"]:
+                        result_interim[2].append(node)
+                        break
+
+        minimum_value = min(result_interim[1])
+        minimum_index = result_interim[1].index(minimum_value)
+            
+        # Liste an einer Stelle
+        #print("RESULUT AUS NEAREST: " + str([result_interim[0][minimum_index], result_interim[1][minimum_index],result_interim[2][minimum_index]]))
+        
+        #print("GANZES RESULT :" + str(result_interim) )
+        return [result_interim[0][minimum_index], result_interim[1][minimum_index],result_interim[2][minimum_index]]
+        
 #        for node in self.graph.nodes(data=True):              
 #            if 'interim' in str(node[0]):
 #                result_interim.append(node)
@@ -61,8 +105,8 @@ class BasicPRM(IPPRMBase.PRMBase):
         #for node in checkedInterimGoalList:
         #    euclidean(node[1]['pos'],pos)
         
-        print(str(checkedInterimGoalList))
-        
+        #print("Interim:" + str(checkedInterimGoalList))
+        # [3, 10]
         # wie wolln wir vorgehen
         
         # schleife die schaut was von anderen Interims der nächste ist
@@ -74,16 +118,20 @@ class BasicPRM(IPPRMBase.PRMBase):
         # Neue Idee:
         
         # 1. Ausgabe Pfad von Start bis nähestes Interim
+        # nx.shortestPath (Start, neartestInterium)
+        
         # 2. Wir nehmen dann die erste Node aus dem Pfad, nach Start (Node A)
         # 3. Dann rufen wir nearest Neighbour, wir wollen den Abstand von der aktuellen Node allen Interiums
         # 3b. Abgleichen mit Liste die schon abgehakt ist, wegschmeißen der Interium die schon verplant sind
         # 4. Interim mit dem kleinesten Abstand wird das nächste ZWischenziel -> Interim B
         # 5. nx.shorestPath (Node A, Interim B)
         # 6. gehe wieder zu 2
+        # wenn wir durch alle Interiums durch sind (interimGoal = Liste aus 3b ), verbindung mit dem Ziel
+    
 
 
                 
-        return result_interim
+        #return result_interim
     
     
     @IPPerfMonitor
@@ -158,11 +206,14 @@ class BasicPRM(IPPRMBase.PRMBase):
 
 
         for interimGoal in range(len(checkedInterimGoalList)):
-            print("InterimGoal: " + str(interimGoal))
-            print("Was steht in der Liste: " + str(checkedInterimGoalList[interimGoal]))
+            #print("InterimGoal: " + str(interimGoal))
+            #print("Was steht in der Liste: " + str(checkedInterimGoalList[interimGoal]))
+            # wie komme ich an die current Node
             
             result = self._nearestNeighbours(checkedInterimGoalList[interimGoal],config["radius"])
-            result_interim = self._nearestInterim(checkedInterimGoalList[interimGoal])
+            
+            
+            
             nameOfNode = "interim" + str(interimGoal)
 
             for node in result:
@@ -183,9 +234,14 @@ class BasicPRM(IPPRMBase.PRMBase):
             interim_count = len(checkedInterimGoalList)
 
             # Calc shortest Path To Interium 
-            
+            result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList,checkedGoalList)
+            print("Result:" + str(result_interim))
             # Connect Start with first interim
-            path = nx.shortest_path(self.graph, "start", "interim0")
+            path = nx.shortest_path(self.graph, "start", result_interim[2])
+            print("PFAD: "+ str(path))
+            
+            # 
+            
 
             # Connect all interims
             for i in range(interim_count - 1):
@@ -198,7 +254,8 @@ class BasicPRM(IPPRMBase.PRMBase):
             path += nx.shortest_path(self.graph, "interim" + str(interim_count - 1), "goal")
 
             print(path)
-        except:
+        except Exception as e :
+            print("Fehler " + str(e))
             return []
         return path
     
