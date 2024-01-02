@@ -242,17 +242,21 @@ class BasicPRM(IPPRMBase.PRMBase):
             #     print(step)
             #     path.update(self.graph.nodes[step])
             #     print("startpfad" + str(path))
+            path = list()
             
-            for step in try_path[1:]:
-                print("rwrf"+ str(self.graph.nodes[step]))
+
+            for step in try_path[:]:
+                #print("rwrf"+ str(self.graph.nodes[step]))
                 # 2. Nearest Interim bestimmen
                 new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                print("new_result_interim"+ str(new_result_interim))
+                # print("new_result_interim"+ str(new_result_interim))
                 if new_result_interim[2] == result_interim[2]:
-                    path = try_path[:try_path.index(step)]
+                    path.append(step)
+                    # path += try_path[:try_path.index(step)]
                     continue
                 else:
                     result_interim = new_result_interim
+                print("aktuelles Interim" + str(result_interim))
 
                 print("halli Pfad: "+ str(path))
             
