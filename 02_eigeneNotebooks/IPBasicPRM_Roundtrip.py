@@ -51,30 +51,20 @@ class BasicPRM(IPPRMBase.PRMBase):
         return result
     
     @IPPerfMonitor
-    def _nearestInterim(self,currentNode,checkedInterimGoalList, checkedGoalList):
-        
-        #result_interim = [list(),list(),list()]
+    def _nearestInterim(self,currentNode,checkedInterimGoalList):
         result_interim = [[],[],[]]
         # Liste 1: Koordinaten
         # Liste 2: Abstand
         # Liste 3: Namen
         
-        #print("currentNode:" +str(currentNode)+ str(type(currentNode)))
-        #make one list containing all goal/points to reach
-        #for i in range(len(checkedGoalList)):
-            #checkedInterimGoalList.append(i)
-        #print("CheckedInterimLIst " + str(checkedInterimGoalList))
-        
-        #print("InterimListeaddiert"+ str(checkedInterimGoalList))
+        # print("InterimListeaddiert"+ str(checkedInterimGoalList))
         i = 0
         for next_pos_node in checkedInterimGoalList:
-            #print("test")
-            #print("current X :" + str(currentNode[0]) + "Y" + str(currentNode[1]))
-            #print("next X :" + str(next_pos_node[0]) + "Y" + str(next_pos_node[1]))
+
             point_current = (currentNode[0] , currentNode[1])
             point_pos_next = (next_pos_node[0],next_pos_node[1])
 
-            #print("Abstand" + str(euclidean(point_current,point_pos_next)))
+            # print("Abstand" + str(euclidean(point_current,point_pos_next)))
             result_interim[0].append(next_pos_node)
             result_interim[1].append(euclidean(point_current,point_pos_next))
             i += 1
@@ -87,14 +77,14 @@ class BasicPRM(IPPRMBase.PRMBase):
                     if nearest == attributes["pos"]:
                         result_interim[2].append(node)
                         break
-
+        
         minimum_value = min(result_interim[1])
         minimum_index = result_interim[1].index(minimum_value)
             
         # Liste an einer Stelle
-        #print("RESULUT AUS NEAREST: " + str([result_interim[0][minimum_index], result_interim[1][minimum_index],result_interim[2][minimum_index]]))
-        
-        #print("GANZES RESULT :" + str(result_interim) )
+        # print("RESULUT AUS NEAREST: " + str([result_interim[0][minimum_index], result_interim[1][minimum_index],result_interim[2][minimum_index]]))
+        # print(result_interim)
+        # print("GANZES RESULT :" + str(result_interim) )
         return [result_interim[0][minimum_index], result_interim[1][minimum_index],result_interim[2][minimum_index]]
         
 #        for node in self.graph.nodes(data=True):              
@@ -185,6 +175,9 @@ class BasicPRM(IPPRMBase.PRMBase):
         # 1. check start and goal whether collision free (s. BaseClass)
         checkedStartList, checkedInterimGoalList, checkedGoalList = self._checkStartGoal(startList,interimGoalList, goalList)
         
+        # Goallist an InterimGoalList anhängen
+        checkedInterimGoalList.append(checkedGoalList[0])
+
         #print(checkedStartList)
         #print(checkedInterimGoalList)
         #print(checkedGoalList)
@@ -233,14 +226,39 @@ class BasicPRM(IPPRMBase.PRMBase):
             
             interim_count = len(checkedInterimGoalList)
 
-            # Calc shortest Path To Interium 
-            result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList,checkedGoalList)
+            # Calc shortest distance to Interim 
+            result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
             print("Result:" + str(result_interim))
-            # Connect Start with first interim
-            path = nx.shortest_path(self.graph, "start", result_interim[2])
-            print("PFAD: "+ str(path))
+            # Plan path from start to nearest interim
+            try_path = nx.shortest_path(self.graph, "start", result_interim[2])
+            print("PFAD: "+ str(try_path)+ str(type(try_path)))
             
-            # 
+            
+
+            # 1. Einträge aus Pfad hochzählen
+            # print(self.graph.nodes["start"])
+            # path = self.graph.nodes["start"]
+            # for step in try_path[1:]:
+            #     print(step)
+            #     path.update(self.graph.nodes[step])
+            #     print("startpfad" + str(path))
+            
+            for step in try_path[1:]:
+                print("rwrf"+ str(self.graph.nodes[step]))
+                # 2. Nearest Interim bestimmen
+                new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
+                print("new_result_interim"+ str(new_result_interim))
+                if new_result_interim[2] == result_interim[2]:
+                    path = try_path[:try_path.index(step)]
+                    continue
+                else:
+                    result_interim = new_result_interim
+
+                print("halli Pfad: "+ str(path))
+            
+            # 3. Weiter hochzählen, wenn nearestInterim == aktuelles Interim
+            # 4. aktuelles Interim aktualisieren wenn nearest interim != aktuelles Interim
+
             
 
             # Connect all interims
