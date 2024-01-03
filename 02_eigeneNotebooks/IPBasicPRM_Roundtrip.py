@@ -156,7 +156,7 @@ class BasicPRM(IPPRMBase.PRMBase):
         # 1. check start and goal whether collision free (s. BaseClass)
         checkedStartList, checkedInterimGoalList, checkedGoalList = self._checkStartGoal(startList,interimGoalList, goalList)
         
-        # Goallist an InterimGoalList anhängen
+        # Add Goallist to InterimGoalList
         checkedInterimGoalList.append(checkedGoalList[0])
 
         #print(checkedStartList)
@@ -198,8 +198,6 @@ class BasicPRM(IPPRMBase.PRMBase):
         
         try:
             
-            #interim_count = len(checkedInterimGoalList)
-
             # Calculate shortest distance to nearest interim from start 
             result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
             print("Result:" + str(result_interim))

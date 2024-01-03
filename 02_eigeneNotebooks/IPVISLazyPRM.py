@@ -29,8 +29,7 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
 
     
     # get a list of degrees of all nodes
-    #degree = nx.degree_centrality(graph)
-    
+    # degree = nx.degree_centrality(graph)
     # draw graph (nodes colorized by degree)
     nx.draw(graph, pos = pos, node_color = list(color.values()))
     
@@ -64,7 +63,6 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
                                  alpha=0.1,
                                  width=1.0
                                  )
-    
     
 
     collChecker.drawObstacles(ax)
@@ -115,6 +113,10 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
 
         # draw edges based on solution path
         nx.draw_networkx_edges(Gsp,pos,alpha=0.8,edge_color='g',width=10)
+
+    print("Kanten: " + str(Gsp.edges))
+
+        
     
 
     
