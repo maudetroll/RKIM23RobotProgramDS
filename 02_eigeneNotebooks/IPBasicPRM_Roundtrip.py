@@ -12,6 +12,8 @@ import networkx as nx
 import random
 import numpy as np
 import math
+import HelperClass
+
 
 # reduce coding effort by using function provided by scipy
 from scipy.spatial.distance import euclidean, cityblock

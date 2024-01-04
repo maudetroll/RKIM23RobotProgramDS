@@ -10,6 +10,7 @@ from scipy.spatial import cKDTree
 import networkx as nx
 import random
 from scipy.spatial.distance import euclidean
+import HelperClass
 
 from IPPerfMonitor import IPPerfMonitor
 
@@ -96,10 +97,9 @@ class LazyPRM(PRMBase):
         kdTree = cKDTree(posList)
         
         # to see when _buildRoadmap has to be called again
-        # print(addedNodes)
         for node in addedNodes:
-        # for node in self.graph.nodes():
-        # Find set of candidates to connect to sorted by distance
+
+            # Find set of candidates to connect to sorted by distance
             result = kdTree.query(self.graph.nodes[node]['pos'],k=kNearest)
             for data in result[1]:
                 c_node = [x for x, y in self.graph.nodes(data=True) if (y['pos']==posList[data])][0]
@@ -108,10 +108,47 @@ class LazyPRM(PRMBase):
                         self.graph.add_edge(node,c_node)
                     else:
                         continue
-                        #print "not adding already checked colliding edge"
     
     @IPPerfMonitor
-    def _checkForCollisionAndUpdate(self,path):
+    def _checkForCollisionAndUpdate(self,long_path):
+        path = long_path[:2]
+        print("Path", path)
+        # first check all nodes
+        for nodeNumber in path:
+            if self._collisionChecker.pointInCollision(self.graph.nodes[nodeNumber]['pos']):
+                print("Removed nodeNumber: "+ str(nodeNumber))
+                self.graph.remove_node(nodeNumber)
+                
+                return True
+        
+        # check all path segments
+              
+        for elem in zip(path,path[1:]):
+            #print elem
+
+            print("*******")
+            x = elem[0]
+            y = elem[1]
+            print("x", x)
+            print("y",y)
+            if self._collisionChecker.lineInCollision(self.graph.nodes()[x]['pos'],self.graph.nodes()[y]['pos']):
+                self.graph.remove_edge(x,y)
+                self.collidingEdges.append((x,y))
+                # print("Colliding Edges: "+ str(self.collidingEdges))
+                return True
+            else:
+                # Verhindern damit Interim nicht mit sich selbst verbindet
+            #    if x != y:
+                self.nonCollidingEdges.append((x,y))
+                    # print("NONColliding Edges: "+ str(self.nonCollidingEdges))
+
+                                                                                          
+            
+        return False
+    
+        
+    @IPPerfMonitor
+    def _checkForCollisionAndUpdate_MS(self,path):
         # first check all nodes
         for nodeNumber in path:
             if self._collisionChecker.pointInCollision(self.graph.nodes[nodeNumber]['pos']):
@@ -133,8 +170,8 @@ class LazyPRM(PRMBase):
                 return True
             else:
                 # Verhindern damit Interim nicht mit sich selbst verbindet
-                if x != y:
-                    self.nonCollidingEdges.append((x,y))
+            #    if x != y:
+                self.nonCollidingEdges.append((x,y))
                     # print("NONColliding Edges: "+ str(self.nonCollidingEdges))
 
                                                                                           
@@ -156,6 +193,10 @@ class LazyPRM(PRMBase):
             config["updateRoadmapSize"]  = 20 # number of nodes to add if there is no connection from start to end
             config["kNearest"] = 5 # number of nodes to connect to during setup
         """
+        
+        # HelperClass.HelperClass.printInColor("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR", 'red')
+
+        
         # 0. reset
         self.graph.clear()
         self.lastGeneratedNodeNumber = 0
@@ -203,7 +244,7 @@ class LazyPRM(PRMBase):
             # Loop to iteratively plan a path through interim goals
             while not breakcondition and maxTry < 40:
             #print(breakcondition)
-                    
+                #try_path = try_path[:2]    
                 print("TRYPATH :" + str(try_path))
                 
                 # Iterate through steps in the current try_path
@@ -217,18 +258,22 @@ class LazyPRM(PRMBase):
                     
                     # Check if the new interim goal is the same as the previous one
                     if new_result_interim[2] == result_interim[2]:
-                        
+                        print("New Result ist result interim ", new_result_interim[2])
                         # Add step to the final path
-                        path.append(step)
-
+                        
                         # Check try_path for collision
                         if self._checkForCollisionAndUpdate(try_path):
-                            
+
+                            print("Element 1", try_path[:1])
+                            print("Element 2", try_path[:2])
+
                             # Remove actual step from path again
-                            path.pop()
+                            #a= path.pop()
+                            #print(a)
                             
                             # Add nodes
                             self._buildRoadmap(config["updateRoadmapSize"], config["kNearest"])
+                            
                             maxTry += 1
                             print("MaxTry: " + str(maxTry))
                             nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
@@ -236,19 +281,21 @@ class LazyPRM(PRMBase):
                             # Plan a new path from the current position to the new interim goal
                             try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
 
-                            break                            
-
-                        print("Aktueller Pfad: " + str(path))
+                            break
+                        else:
+                            path.append(step)
+                        
+                        HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
                         print("Ziel-Interim" + str(result_interim))
                         print("Abstand" + str(new_result_interim[1]))
                         
                         # Check if the distance to the new interim is zero (Interim is reached)
                         if new_result_interim[1] == 0.0:
-                            print("DER ABSTAND IST NULL")
+                            print("Interim ist erreicht")
                             
                             # Get the node name of current step based on coordinates
                             nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
-                            print("Akutlele Interim Golalist: " +str(checkedInterimGoalList))
+                            print("Aktuelle Interim Goallist: " +str(checkedInterimGoalList))
                             
                             # Check if there is only one interim goal remaining, this means all interims are reached
                             if (len(checkedInterimGoalList) == 1 ):
@@ -284,31 +331,21 @@ class LazyPRM(PRMBase):
 
                         break
             
-            # print("Kompletter Pfad: "+ str(path))
-        
-            """
-            interim_count = len(checkedInterimGoalList)
-
-            # Connect Start with first interim
-            path = nx.shortest_path(self.graph, "start", "interim0")
-
-            # Connect all interims
-            for i in range(interim_count - 1):
-                interim_name_current = "interim" + str(i)
-                interim_name_next = "interim" + str(i + 1)
-                
-                path += nx.shortest_path(self.graph, interim_name_current, interim_name_next)
-                
-            # Connect last interim with goal
-            path += nx.shortest_path(self.graph, "interim" + str(interim_count - 1), "goal")
-            """  
-            print(f"Pfad= {path}") 
             
-            # Remove duplicates in path
+            
+            
+            HelperClass.HelperClass.printInColor(f"Pfad= {path}", 'green')
+            print("")
+            
+            print("Vorher:", len(self.graph.nodes()))
+            #self._checkForCollisionAndUpdate(self.graph.nodes())
+            print("Nachher:", len(self.graph.nodes()))
+            
             return path
         
         except Exception as e:
-            print(str(maxTry) + " Fehler: " + str(e))
+            HelperClass.HelperClass.printInColor("Kein Pfad gefunden", 'orange')
+            print("MaxTry: "+ str(maxTry) + " Fehler: " + str(e))
 
         return []
 
