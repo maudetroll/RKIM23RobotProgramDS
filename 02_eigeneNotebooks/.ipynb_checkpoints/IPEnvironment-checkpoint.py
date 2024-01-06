@@ -42,6 +42,7 @@ class CollisionChecker(object):
     @IPPerfMonitor
     def lineInCollision(self, startPos, endPos):
         """ Check whether a line from startPos to endPos is colliding"""
+
         assert (len(startPos) == self.getDim())
         assert (len(endPos) == self.getDim())
         

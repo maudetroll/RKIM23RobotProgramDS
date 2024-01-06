@@ -27,7 +27,7 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
         for i in collEdges:
             collGraph.add_edge(i[0],i[1])
             
-        nx.draw_networkx_edges(collGraph,pos,alpha=0.2,edge_color='r',width=5)
+        nx.draw_networkx_edges(collGraph,pos,alpha=0.5,edge_color='r',width=5)
 
     
     # get a list of degrees of all nodes
@@ -67,8 +67,8 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
             
         else:
             print("No other connected components")
-            print("Länge Gi: " + str(len(Gi)))
-            print("Gi: "+ str(Gi))
+            #print("Länge Gi: " + str(len(Gi)))
+            #print("Gi: "+ str(Gi))
     
 
     collChecker.drawObstacles(ax)
@@ -97,30 +97,40 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
         nx.draw_networkx_labels(graph,pos,labels={name: "I"},  ax = ax)
         i += 1
 
+    print("Solution: " + str(solution))
 
 
-    print(solution)
     if solution != []:
         #solution = solution[:4]
         #print("modSol", solution)
         # draw nodes based on solution path
         
-        Gsp = nx.subgraph(graph,solution)
+        #Gsp = nx.subgraph(graph,solution)
+        solGraph = nx.Graph()
         
- 
+        for i in range(len(solution) - 1):
+            current_element = solution[i]
+            next_element = solution[i + 1]
+            solGraph.add_edge(current_element,next_element)
+            print(current_element,next_element)
         
-        #Gsp = nx.Graph()
-        #Gsp.add_nodes_from(set(solution))
-        
-        #nx.draw_networkx_nodes(Gsp,pos,
-        #                        node_size=300,
-        #                         node_color='g')
 
-        # draw edges based on solution path
-        #print("GSP")
+            
         
+
         
+        Gsp = nx.subgraph(solGraph,solution)
+        #GsNColliding = nx.subgraph(nonCollGraph,solution)
+        #Gsp.edges = solution
+        
+        #Gsp = nx.Graph(nonCollGraph, solution)
+        
+
+        
+        #nx.draw_networkx_edges(GsNColliding,pos,alpha=0.2,edge_color='y',width=10)
         nx.draw_networkx_edges(Gsp,pos,alpha=0.8,edge_color='g',width=10)
+        
+
 
     print("Kanten: " + str(Gsp.edges))
     print("Solution: " + str(solution))

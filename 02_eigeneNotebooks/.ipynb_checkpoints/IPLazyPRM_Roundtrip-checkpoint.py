@@ -23,6 +23,8 @@ class LazyPRM(PRMBase):
         self.lastGeneratedNodeNumber = 0
         self.collidingEdges = []
         self.nonCollidingEdges =[]
+        
+
 
     def _getNodeNamebasedOnCoordinates(self,coordinates):
         # Initialize node name
@@ -110,38 +112,51 @@ class LazyPRM(PRMBase):
                         continue
     
     @IPPerfMonitor
-    def _checkForCollisionAndUpdate(self,long_path):
-        path = long_path[:2]
-        print("Path", path)
+    def _checkForCollisionAndUpdate(self,step, path):
+        #path = long_path[:2]
+        print("Path im Check and CollisonUpdate", path)
+        print("step", step)
         # first check all nodes
-        for nodeNumber in path:
+        if self._collisionChecker.pointInCollision(step):
+            print("Removed nodeNumber mit Koordinaten: "+ str(step))
+            print("Remove Nodenumer: ", self._getNodeNamebasedOnCoordinates(step))
+            self.graph.remove_node(self._getNodeNamebasedOnCoordinates(step))
+            return True
+        
+        '''
+                for nodeNumber in path:
             if self._collisionChecker.pointInCollision(self.graph.nodes[nodeNumber]['pos']):
                 print("Removed nodeNumber: "+ str(nodeNumber))
                 self.graph.remove_node(nodeNumber)
                 
                 return True
+        '''
         
         # check all path segments
               
-        for elem in zip(path,path[1:]):
+        #for elem in zip(path,path[1:]):
             #print elem
 
-            print("*******")
-            x = elem[0]
-            y = elem[1]
-            print("x", x)
-            print("y",y)
-            if self._collisionChecker.lineInCollision(self.graph.nodes()[x]['pos'],self.graph.nodes()[y]['pos']):
-                self.graph.remove_edge(x,y)
-                self.collidingEdges.append((x,y))
+        print("******* Check Edges for Collision")
+
+        step = self._getNodeNamebasedOnCoordinates(step)
+        path = self._getNodeNamebasedOnCoordinates(path) 
+        print("Step", step)
+        print("Path", path)
+    
+        if self._collisionChecker.lineInCollision(self.graph.nodes()[step]['pos'], self.graph.nodes()[path]['pos']):
+            self.graph.remove_edge(step,path)
+            self.collidingEdges.append((step,path))
+            print("Collison zwischen", step, " ",path)
                 # print("Colliding Edges: "+ str(self.collidingEdges))
-                return True
-            else:
+            return True
+        else:
                 # Verhindern damit Interim nicht mit sich selbst verbindet
             #    if x != y:
-                self.nonCollidingEdges.append((x,y))
-                    # print("NONColliding Edges: "+ str(self.nonCollidingEdges))
 
+            self.nonCollidingEdges.append((step,path))
+                    # print("NONColliding Edges: "+ str(self.nonCollidingEdges))
+    
                                                                                           
             
         return False
@@ -194,7 +209,6 @@ class LazyPRM(PRMBase):
             config["kNearest"] = 5 # number of nodes to connect to during setup
         """
         
-        # HelperClass.HelperClass.printInColor("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR", 'red')
 
         
         # 0. reset
@@ -226,76 +240,91 @@ class LazyPRM(PRMBase):
         self._buildRoadmap(config["initialRoadmapSize"], config["kNearest"])
         
         maxTry = 0
+        coordinatesLastPathEle = []
 
         try:
 
             # Calculate shortest distance to nearest interim from start 
             result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
-            print("Result:" + str(result_interim))
-            
-            # Plan path from start to nearest interim
-            try_path = nx.shortest_path(self.graph, "start", result_interim[2])
-            # print("PFAD: "+ str(try_path)+ str(type(try_path)))
+            print("Erstes Ziel Interim:" + str(result_interim))
             
             # Initialize path and loop break condition
             path = list()
             breakcondition = False
             
+            # Plan path from start to nearest interim
+            try_path = nx.shortest_path(self.graph, "start", result_interim[2])
+            path.append(try_path[0])
+            
+            # Löschen des ersten Elements -> Start
+            try_path.remove('start')
+            print("try-Pfad nach Löschung von Start: ", try_path)
+
+
+            coordinatesLastPathEle.append(checkedStartList[0])
+            
             # Loop to iteratively plan a path through interim goals
             while not breakcondition and maxTry < 40:
-            #print(breakcondition)
-                #try_path = try_path[:2]    
-                print("TRYPATH :" + str(try_path))
+
+                print("While beginnt")
                 
                 # Iterate through steps in the current try_path
                 for step in try_path:
-                    print("for-schleife beginnt")
+                    
+                    HelperClass.HelperClass.printInColor("for-schleife beginnt", 'green')
+                    print("Aktueller Node (step): ", step)
+                    
                     
                     # Find nearest interim goal from the current step in Try-path
-                    new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
+                    new_result_interim = self._nearestInterim(self.graph.nodes()[step]['pos'], checkedInterimGoalList)
                     
-                    # print("new_result_interim"+ str(new_result_interim))
                     
                     # Check if the new interim goal is the same as the previous one
                     if new_result_interim[2] == result_interim[2]:
-                        print("New Result ist result interim ", new_result_interim[2])
-                        # Add step to the final path
+                        print("Neues Interim == altes Interim: ", new_result_interim[2])
                         
-                        # Check try_path for collision
-                        if self._checkForCollisionAndUpdate(try_path):
-
-                            print("Element 1", try_path[:1])
-                            print("Element 2", try_path[:2])
-
-                            # Remove actual step from path again
-                            #a= path.pop()
-                            #print(a)
+                        # Check for collision
+                        if self._checkForCollisionAndUpdate(self.graph.nodes[step]['pos'], coordinatesLastPathEle[-1]):
+                            print("")
+                            print("Kollision erkannt")
                             
                             # Add nodes
                             self._buildRoadmap(config["updateRoadmapSize"], config["kNearest"])
                             
                             maxTry += 1
-                            print("MaxTry: " + str(maxTry))
-                            nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
+                            #print("MaxTry: " + str(maxTry))
+                            
                             
                             # Plan a new path from the current position to the new interim goal
-                            try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
-
+                            try_path = nx.shortest_path(self.graph,path[-1],result_interim[2])
+                            
+                            print("Trypath vor pop ", try_path)
+                            try_path.pop(0)
+                                
+                            print("TRYPATH-Umplanung nach Kollision: " + str(try_path))
+                            print("")
                             break
+                            
                         else:
                             path.append(step)
+                            coordinatesLastPathEle.append(self.graph.nodes()[step]['pos'])
+                            new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
+
+                            #nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
+
+                            # Plan a new path from the current position to the new interim goal
+                            #try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
+                            
                         
                         HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
-                        print("Ziel-Interim" + str(result_interim))
-                        print("Abstand" + str(new_result_interim[1]))
+                        print("Ziel-Interim: " + str(new_result_interim))
                         
                         # Check if the distance to the new interim is zero (Interim is reached)
                         if new_result_interim[1] == 0.0:
-                            print("Interim ist erreicht")
+                            print("Interim ist erreicht!")
                             
                             # Get the node name of current step based on coordinates
                             nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
-                            print("Aktuelle Interim Goallist: " +str(checkedInterimGoalList))
                             
                             # Check if there is only one interim goal remaining, this means all interims are reached
                             if (len(checkedInterimGoalList) == 1 ):
@@ -307,28 +336,43 @@ class LazyPRM(PRMBase):
                             # Remove the current interim goal from the list
                             else:
                                 checkedInterimGoalList.remove(result_interim[0])
+                                
+                                # Calculate the shortest distance to the new interim goal
+                                new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
+                                print("Neues Ziel-Interim verfügbar!: ", new_result_interim)
+                                
+                                nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[step]['pos'])
+                                #nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[path[-1]]['pos'])
 
-                            # Calculate the shortest distance to the new interim goal
-                            result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                            
-                            # Plan a new path from the current position to the new interim goal
-                            try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
-                            
-                            break
+                                # Plan a new path from the current position to the new interim goal
+                                try_path = nx.shortest_path(self.graph,nodeName,new_result_interim[2])
+                                print("Neuer TRYPATH nachdem Ziel erreicht" + str(try_path))
+                                
+
+                                print(try_path[0], " entfernt")
+                                try_path.pop(0)
+
+                                break
 
                     # If new interim goal is not the same as the current one  
                     else:
-                        print("bin im Else")
+                        print("Neues Interim !!!=== altes Interim:")
                         
                         # Update the current interim goal through the new interim goal information
                         result_interim = new_result_interim
                         
                         # Get the node name of current step based on coordinates
-                        nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
+                        #nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
+                        
+
                         
                         # Plan a new try path from the current position to the new interim goal
-                        try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
+                        try_path = nx.shortest_path(self.graph,path[-1],result_interim[2])
 
+                        print(try_path[0], " entfernt")
+                        try_path.pop(0)
+                        print("trypath ungleiches Interim: ",try_path )
+                        print("")
                         break
             
             
@@ -336,16 +380,14 @@ class LazyPRM(PRMBase):
             
             HelperClass.HelperClass.printInColor(f"Pfad= {path}", 'green')
             print("")
-            
-            print("Vorher:", len(self.graph.nodes()))
-            #self._checkForCollisionAndUpdate(self.graph.nodes())
-            print("Nachher:", len(self.graph.nodes()))
-            
+                                 
             return path
         
         except Exception as e:
             HelperClass.HelperClass.printInColor("Kein Pfad gefunden", 'orange')
             print("MaxTry: "+ str(maxTry) + " Fehler: " + str(e))
+            import traceback
+            traceback.print_exc()
 
         return []
 
