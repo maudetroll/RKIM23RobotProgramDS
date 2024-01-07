@@ -173,7 +173,7 @@ class BasicPRM(IPPRMBase.PRMBase):
         result = self._nearestNeighbours(checkedStartList[0], config["radius"])
         for node in result:
             if not self._collisionChecker.lineInCollision(checkedStartList[0],node[1]['pos']):
-                 self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
+                 self.graph.add_node("start", pos=checkedStartList[0], color='lawngreen')
                  self.graph.add_edge("start", node[0])
                  break    
 
@@ -187,14 +187,14 @@ class BasicPRM(IPPRMBase.PRMBase):
 
             for node in result:
                 if not self._collisionChecker.lineInCollision(checkedInterimGoalList[interimGoal],node[1]['pos']):
-                    self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal], color='lightgreen')
+                    self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal], color='Coral')
                     self.graph.add_edge(nameOfNode, node[0])
                     break
 
         result = self._nearestNeighbours(checkedGoalList[0], config["radius"])
         for node in result:
             if not self._collisionChecker.lineInCollision(checkedGoalList[0],node[1]['pos']):
-                 self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
+                 self.graph.add_node("goal", pos=checkedGoalList[0], color='Coral')
                  self.graph.add_edge("goal", node[0])
                  break
         

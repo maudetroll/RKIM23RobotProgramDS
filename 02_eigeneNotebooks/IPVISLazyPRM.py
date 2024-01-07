@@ -78,7 +78,7 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
     if "start" in graph.nodes(): 
         nx.draw_networkx_nodes(graph,pos,nodelist=["start"],
                                    node_size=300,
-                                   node_color='#00dd00',  ax = ax)
+                                   node_color='lawngreen',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={"start": "S"},  ax = ax)
 
 
@@ -92,8 +92,8 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
     for interim in range(amountIterims):
         name = "interim" + str(i)
         nx.draw_networkx_nodes(graph,pos,nodelist=[name],
-                                    node_size=nodeSize,
-                                    node_color='#DD00DA',  ax = ax)
+                                    node_size=300,
+                                    node_color='Gold',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={name: "I"},  ax = ax)
         i += 1
 
