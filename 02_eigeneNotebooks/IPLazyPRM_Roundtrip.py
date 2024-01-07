@@ -241,6 +241,7 @@ class LazyPRM(PRMBase):
         
         maxTry = 0
         coordinatesLastPathEle = []
+        maxIterations = 100
 
         try:
 
@@ -264,7 +265,7 @@ class LazyPRM(PRMBase):
             coordinatesLastPathEle.append(checkedStartList[0])
             
             # Loop to iteratively plan a path through interim goals
-            while not breakcondition and maxTry < 40:
+            while not breakcondition and maxTry < maxIterations:
 
                 print("While beginnt")
                 
@@ -274,113 +275,88 @@ class LazyPRM(PRMBase):
                     HelperClass.HelperClass.printInColor("for-schleife beginnt", 'green')
                     print("Aktueller Node (step): ", step)
                     
-                    
-                    # Find nearest interim goal from the current step in Try-path
-                    new_result_interim = self._nearestInterim(self.graph.nodes()[step]['pos'], checkedInterimGoalList)
-                    
-                    
-                    # Check if the new interim goal is the same as the previous one
-                    if new_result_interim[2] == result_interim[2]:
-                        print("Neues Interim == altes Interim: ", new_result_interim[2])
+                    # Check for collision
+                    if self._checkForCollisionAndUpdate(self.graph.nodes[step]['pos'], coordinatesLastPathEle[-1]):
+                        print("")
+                        print("Kollision erkannt")
                         
-                        # Check for collision
-                        if self._checkForCollisionAndUpdate(self.graph.nodes[step]['pos'], coordinatesLastPathEle[-1]):
-                            print("")
-                            print("Kollision erkannt")
-                            
-                            # Add nodes
-                            self._buildRoadmap(config["updateRoadmapSize"], config["kNearest"])
-                            
-                            maxTry += 1
-                            #print("MaxTry: " + str(maxTry))
-                            
-                            
-                            # Plan a new path from the current position to the new interim goal
-                            try_path = nx.shortest_path(self.graph,path[-1],result_interim[2])
-                            
-                            print("Trypath vor pop ", try_path)
-                            try_path.pop(0)
-                                
-                            print("TRYPATH-Umplanung nach Kollision: " + str(try_path))
-                            print("")
-                            break
-                            
-                        else:
-                            path.append(step)
-                            coordinatesLastPathEle.append(self.graph.nodes()[step]['pos'])
-                            new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-
-                            #nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
-
-                            # Plan a new path from the current position to the new interim goal
-                            #try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
-                            
+                        # Add nodes
+                        self._buildRoadmap(config["updateRoadmapSize"], config["kNearest"])
                         
-                        HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
-                        print("Ziel-Interim: " + str(new_result_interim))
+                        maxTry += 1
+                        print("MaxTry: " + str(maxTry))
                         
-                        # Check if the distance to the new interim is zero (Interim is reached)
-                        if new_result_interim[1] == 0.0:
-                            print("Interim ist erreicht!")
-                            
-                            # Get the node name of current step based on coordinates
-                            nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
-                            
-                            # Check if there is only one interim goal remaining, this means all interims are reached
-                            if (len(checkedInterimGoalList) == 1 ):
-                                
-                                # End the loop
-                                breakcondition = True
-                                break
-                            
-                            # Remove the current interim goal from the list
-                            else:
-                                checkedInterimGoalList.remove(result_interim[0])
-                                
-                                # Calculate the shortest distance to the new interim goal
-                                new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                                print("Neues Ziel-Interim verfügbar!: ", new_result_interim)
-                                
-                                nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[step]['pos'])
-                                #nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[path[-1]]['pos'])
-
-                                # Plan a new path from the current position to the new interim goal
-                                try_path = nx.shortest_path(self.graph,nodeName,new_result_interim[2])
-                                print("Neuer TRYPATH nachdem Ziel erreicht" + str(try_path))
-                                
-
-                                print(try_path[0], " entfernt")
-                                try_path.pop(0)
-
-                                break
-
-                    # If new interim goal is not the same as the current one  
-                    else:
-                        print("Neues Interim !!!=== altes Interim:")
                         
-                        # Update the current interim goal through the new interim goal information
-                        result_interim = new_result_interim
-                        
-                        # Get the node name of current step based on coordinates
-                        #nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
-                        
-
-                        
-                        # Plan a new try path from the current position to the new interim goal
+                        # Plan a new path from the current position to the new interim goal
                         try_path = nx.shortest_path(self.graph,path[-1],result_interim[2])
-
-                        print(try_path[0], " entfernt")
+                        
+                        print("Trypath vor pop ", try_path)
                         try_path.pop(0)
-                        print("trypath ungleiches Interim: ",try_path )
+                            
+                        print("TRYPATH-Umplanung nach Kollision: " + str(try_path))
                         print("")
                         break
-            
-            
-            
+                        
+                    else:
+                        print("Keine Kollission erkannt")
+                        path.append(step)
+                        coordinatesLastPathEle.append(self.graph.nodes()[step]['pos'])
+                        new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
+                        
+                        if new_result_interim != result_interim:
+                            print("Neues Interrim: ", new_result_interim)
+                            
+                            result_interim = new_result_interim
+                            nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
+
+                            try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
+                            try_path.pop(0)
+                        
+                    
+                    HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
+                    print("Ziel-Interim: " + str(new_result_interim))
+                    
+                    # Check if the distance to the new interim is zero (Interim is reached)
+                    if new_result_interim[1] == 0.0:
+                        print("Interim ist erreicht!")
+                        
+                        # Check if there is only one interim goal remaining, this means all interims are reached
+                        if (len(checkedInterimGoalList) == 1 ):
+                            
+                            # End the loop
+                            breakcondition = True
+                            break
+                            
+                        # Remove the current interim goal from the list
+                        else:
+                            checkedInterimGoalList.remove(result_interim[0])
+                            
+                            # Calculate the shortest distance to the new interim goal
+                            new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
+                            print("Neues Ziel-Interim verfügbar!: ", new_result_interim)
+                            print("Result Interim: ", result_interim)
+                            
+                            result_interim = new_result_interim
+
+                            nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[step]['pos'])
+                            #nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[path[-1]]['pos'])
+
+                            # Plan a new path from the current position to the new interim goal
+                            try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
+                            print("Neuer TRYPATH nachdem Ziel erreicht" + str(try_path))
+                            
+
+                            print(try_path[0], " aus Trypath entfernt")
+                            try_path.pop(0)
+
+                            break
             
             HelperClass.HelperClass.printInColor(f"Pfad= {path}", 'green')
             print("")
-                                 
+
+            if maxTry == maxIterations:
+                path = []
+
             return path
         
         except Exception as e:
