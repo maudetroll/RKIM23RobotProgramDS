@@ -228,10 +228,6 @@ class VisPRM(PRMBase):
                     print("")
                     print("For-Schleife beginnt")
                     print("Aktueller Node (step): ", step)
-
-                    # Check if the new interim goal is the same as the previous one
-                    # if new_result_interim[2] == result_interim[2]:
-                    # print("NewResultInterim == ResultInterim")
                     
                     # Add step to the final path
                     path.append(step)
@@ -290,21 +286,6 @@ class VisPRM(PRMBase):
 
                         print("Neuer Trypath: ", try_path)
                         break
-
-                    # # If new interim goal is not the same as the current one  
-                    # else:
-                    #     print("NewResultInterim !!!=== ResultInterim")
-                        
-                    #     # Update the current interim goal through the new interim goal information
-                    #     result_interim = new_result_interim
-                        
-                    #     # Get the node name of current step based on coordinates
-                    #     nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
-                        
-                    #     # Plan a new try path from the current position to the new interim goal
-                    #     try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
-                        
-                    #     break
             
             HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
 
