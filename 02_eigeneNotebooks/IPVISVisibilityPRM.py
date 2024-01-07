@@ -39,20 +39,8 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
     if "start" in graph.nodes(): 
         nx.draw_networkx_nodes(graph,pos,nodelist=["start"],
                                    node_size=nodeSize,
-                                   node_color='#00dd00',  ax = ax)
+                                   node_color='lawngreen',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={"start": "S"},  ax = ax)
-
-#    if "interim0" in graph.nodes(): 
-#        nx.draw_networkx_nodes(graph,pos,nodelist=["interim0"],
-#                                    node_size=nodeSize,
-#                                    node_color='#DD00DA',  ax = ax)
-#        nx.draw_networkx_labels(graph,pos,labels={"interim0": "I"},  ax = ax)
-    
-#    if "interim1" in graph.nodes(): 
-#        nx.draw_networkx_nodes(graph,pos,nodelist=["interim1"],
-#                                    node_size=nodeSize,
-#                                    node_color='#DD00DA',  ax = ax)
-#        nx.draw_networkx_labels(graph,pos,labels={"interim1": "I"},  ax = ax)
         
 
     # Count the amount of interims in Node of the main graph
@@ -65,11 +53,11 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
         name = "interim" + str(i)
         nx.draw_networkx_nodes(graph,pos,nodelist=[name],
                                     node_size=nodeSize,
-                                    node_color='#DD00DA',  ax = ax)
+                                    node_color='Dodgerblue',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={name: "I"},  ax = ax)
         i += 1
 
-
+'''
 
     if "goal" in graph.nodes():
         nx.draw_networkx_nodes(graph,pos,nodelist=["goal"],
@@ -77,3 +65,4 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
                                    node_color='#DD0000',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={"goal": "G"},  ax = ax)
 
+'''

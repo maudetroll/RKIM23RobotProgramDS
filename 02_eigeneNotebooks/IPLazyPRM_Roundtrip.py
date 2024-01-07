@@ -332,11 +332,8 @@ class LazyPRM(PRMBase):
                             checkedInterimGoalList.remove(result_interim[0])
                             
                             # Calculate the shortest distance to the new interim goal
-                            new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                            print("Neues Ziel-Interim verfügbar!: ", new_result_interim)
-                            print("Result Interim: ", result_interim)
-                            
-                            result_interim = new_result_interim
+                            result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
+                            print("Neues Ziel-Interim verfügbar!: ", result_interim)
 
                             nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[step]['pos'])
                             #nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[path[-1]]['pos'])
@@ -351,11 +348,9 @@ class LazyPRM(PRMBase):
 
                             break
             
-            HelperClass.HelperClass.printInColor(f"Pfad= {path}", 'green')
-            print("")
-
             if maxTry == maxIterations:
                 path = []
+            HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
 
             return path
         
