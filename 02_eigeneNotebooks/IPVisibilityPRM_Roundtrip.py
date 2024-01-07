@@ -273,6 +273,7 @@ class VisPRM(PRMBase):
                         
                         print("NewResultInterim !!!=== ResultInterim")
                         
+                        old_resultInterim = result_interim
                         result_interim = new_result_interim
                         
                         # Get the node name of current step based on coordinates
@@ -285,6 +286,18 @@ class VisPRM(PRMBase):
                         try_path.pop(0)
 
                         print("Neuer Trypath: ", try_path)
+
+                        # Avoid looping
+
+                        if try_path[0] == path[-2]:
+                            try_path = nx.shortest_path(self.graph,nodeName,old_resultInterim[2])
+                            try_path.pop(0)
+                            result_interim = old_resultInterim
+                            print("")
+                            print("LOOP VERHINDERT")
+                            print("Neuer Trypath: ", try_path)
+
+
                         break
             
             HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
