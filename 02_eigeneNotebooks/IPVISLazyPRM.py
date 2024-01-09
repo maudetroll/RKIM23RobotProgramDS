@@ -7,6 +7,7 @@ License is based on Creative Commons: Attribution-NonCommercial 4.0 Internationa
 """
 
 import networkx as nx
+import HelperClass
 
 
 def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
@@ -101,23 +102,20 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
         #Gsp = nx.subgraph(graph,solution)
         solGraph = nx.Graph()
         
+        if ('start' in HelperClass.HelperClass.find_duplicates(solution)):
+            HelperClass.HelperClass.printInColor("START Doppelt", 'red')
+            
+        
         for i in range(len(solution) - 1):
             current_element = solution[i]
             next_element = solution[i + 1]
             solGraph.add_edge(current_element,next_element)
-        
-
-            
-        
-
         
         Gsp = nx.subgraph(solGraph,solution)
         #GsNColliding = nx.subgraph(nonCollGraph,solution)
         #Gsp.edges = solution
         
         #Gsp = nx.Graph(nonCollGraph, solution)
-        
-
         
         #nx.draw_networkx_edges(GsNColliding,pos,alpha=0.2,edge_color='y',width=10)
         nx.draw_networkx_edges(Gsp,pos,alpha=0.8,edge_color='g',width=10)

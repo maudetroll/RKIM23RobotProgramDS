@@ -24,7 +24,7 @@ class LazyPRM(PRMBase):
         self.collidingEdges = []
         self.nonCollidingEdges =[]
         
-
+    
 
     def _getNodeNamebasedOnCoordinates(self,coordinates):
         # Initialize node name

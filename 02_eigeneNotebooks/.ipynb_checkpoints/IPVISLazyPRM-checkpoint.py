@@ -7,6 +7,7 @@ License is based on Creative Commons: Attribution-NonCommercial 4.0 Internationa
 """
 
 import networkx as nx
+import HelperClass
 
 
 def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
@@ -64,11 +65,8 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
     for Gi in Gcc:
         if len(Gi) >1:
             nx.draw_networkx_edges(Gi,pos,edge_color='b',alpha=0.1, width=1.0)
-            
-        else:
-            print("No other connected components")
-            #print("Länge Gi: " + str(len(Gi)))
-            #print("Gi: "+ str(Gi))
+
+ 
     
 
     collChecker.drawObstacles(ax)
@@ -78,7 +76,7 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
     if "start" in graph.nodes(): 
         nx.draw_networkx_nodes(graph,pos,nodelist=["start"],
                                    node_size=300,
-                                   node_color='#00dd00',  ax = ax)
+                                   node_color='lawngreen',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={"start": "S"},  ax = ax)
 
 
@@ -92,32 +90,26 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
     for interim in range(amountIterims):
         name = "interim" + str(i)
         nx.draw_networkx_nodes(graph,pos,nodelist=[name],
-                                    node_size=nodeSize,
-                                    node_color='#DD00DA',  ax = ax)
+                                    node_size=300,
+                                    node_color='Gold',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={name: "I"},  ax = ax)
         i += 1
 
-    print("Solution: " + str(solution))
-
 
     if solution != []:
-        #solution = solution[:4]
-        #print("modSol", solution)
         # draw nodes based on solution path
         
         #Gsp = nx.subgraph(graph,solution)
         solGraph = nx.Graph()
         
+        if ('start' in HelperClass.HelperClass.find_duplicates(solution)):
+            HelperClass.HelperClass.printInColor("START Doppelt", 'red')
+            
+        
         for i in range(len(solution) - 1):
             current_element = solution[i]
             next_element = solution[i + 1]
             solGraph.add_edge(current_element,next_element)
-            print(current_element,next_element)
-        
-
-            
-        
-
         
         Gsp = nx.subgraph(solGraph,solution)
         #GsNColliding = nx.subgraph(nonCollGraph,solution)
@@ -125,20 +117,9 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
         
         #Gsp = nx.Graph(nonCollGraph, solution)
         
-
-        
         #nx.draw_networkx_edges(GsNColliding,pos,alpha=0.2,edge_color='y',width=10)
         nx.draw_networkx_edges(Gsp,pos,alpha=0.8,edge_color='g',width=10)
-        
 
-
-    print("Kanten: " + str(Gsp.edges))
-    print("Solution: " + str(solution))
-
-    
-    #print()
-    #print("graph edgees")
-    #print(graph.edges)
 
         
     
