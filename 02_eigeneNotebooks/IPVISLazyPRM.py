@@ -101,9 +101,6 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
         
         #Gsp = nx.subgraph(graph,solution)
         solGraph = nx.Graph()
-        
-        if ('start' in HelperClass.HelperClass.find_duplicates(solution)):
-            HelperClass.HelperClass.printInColor("START Doppelt", 'red')
             
         
         for i in range(len(solution) - 1):

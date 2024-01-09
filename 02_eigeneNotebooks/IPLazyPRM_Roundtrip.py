@@ -141,8 +141,6 @@ class LazyPRM(PRMBase):
 
         step = self._getNodeNamebasedOnCoordinates(step)
         path = self._getNodeNamebasedOnCoordinates(path) 
-        print("Step", step)
-        print("Path", path)
     
         if self._collisionChecker.lineInCollision(self.graph.nodes()[step]['pos'], self.graph.nodes()[path]['pos']):
             self.graph.remove_edge(step,path)
@@ -274,6 +272,15 @@ class LazyPRM(PRMBase):
                     
                     HelperClass.HelperClass.printInColor("for-schleife beginnt", 'green')
                     print("Aktueller Node (step): ", step)
+
+                    if step in path:
+                        # if pfadteil (path[path.index(step):]) beinhaltet interim,
+                            # if dieses interim ist nicht in checkedInterimGoalList, dann nicht löschen
+                        path = path[:path.index(step)]
+                        print("Pfad geleert weil doppelt. Neuer Pfad: ", path)
+
+                    #     continue
+
                     
                     # Check for collision
                     if self._checkForCollisionAndUpdate(self.graph.nodes[step]['pos'], coordinatesLastPathEle[-1]):
@@ -290,7 +297,6 @@ class LazyPRM(PRMBase):
                         # Plan a new path from the current position to the new interim goal
                         try_path = nx.shortest_path(self.graph,path[-1],result_interim[2])
                         
-                        print("Trypath vor pop ", try_path)
                         try_path.pop(0)
                             
                         print("TRYPATH-Umplanung nach Kollision: " + str(try_path))
@@ -351,6 +357,9 @@ class LazyPRM(PRMBase):
             if maxTry == maxIterations:
                 path = []
             HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
+
+            if ('start' in HelperClass.HelperClass.find_duplicates(path)):
+                HelperClass.HelperClass.printInColor("START Doppelt", 'red')
 
             return path
         
