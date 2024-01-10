@@ -151,8 +151,8 @@ class VisPRM(PRMBase):
                     print("Eigenschaften von G ",g, " ", self.graph.nodes()[g])
                     
                     # Check ob g = interim und n = 0
-                    # 
                     if ('interim' in str(g) and nodeNumber != 0):
+
                         continue
                         
                     if self.graph.nodes()[g]['nodeType'] == 'Guard':
