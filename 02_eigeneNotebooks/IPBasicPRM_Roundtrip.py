@@ -53,6 +53,7 @@ class BasicPRM(IPPRMBase.PRMBase):
         return result
     
     def _getNodeNamebasedOnCoordinates(self,coordinates):
+        
         # Initialize node name
         nodeName = ""
         
@@ -161,9 +162,6 @@ class BasicPRM(IPPRMBase.PRMBase):
         # Add Goallist to InterimGoalList
         checkedInterimGoalList.append(checkedGoalList[0])
 
-        #print(checkedStartList)
-        #print(checkedInterimGoalList)
-        #print(checkedGoalList)
 
         # 2. learn Roadmap
         self._learnRoadmapNearestNeighbour(config["radius"],config["numNodes"])
@@ -201,11 +199,11 @@ class BasicPRM(IPPRMBase.PRMBase):
         try:
             # Calculate shortest distance to nearest interim from start 
             result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
-            print("Ziel Interim:" + str(result_interim))
+            # print("Ziel Interim:" + str(result_interim))
             
             # Plan path from start to nearest interim
             try_path = nx.shortest_path(self.graph, "start", result_interim[2])
-            print("Try Path: "+ str(try_path))
+            # print("Try Path: "+ str(try_path))
 
             # Initialize path and loop break condition
             path = list()
@@ -213,16 +211,16 @@ class BasicPRM(IPPRMBase.PRMBase):
             
             # Loop to iteratively plan a path through interim goals
             while not breakcondition:
-                print("")
-                print("While Schleife beginnt")
+                # print("")
+                # print("While Schleife beginnt")
                     
-                print("TRYPATH :",(try_path))
+                # print("TRYPATH :",(try_path))
                 
                 # Iterate through steps in the current try_path
                 for step in try_path:
-                    print("")
-                    print("For-Schleife beginnt")
-                    print("Aktueller Node (step): ", step)
+                    # print("")
+                    # print("For-Schleife beginnt")
+                    # print("Aktueller Node (step): ", step)
                     
                     # Add step to the final path
                     path.append(step)
@@ -230,11 +228,11 @@ class BasicPRM(IPPRMBase.PRMBase):
                     
                     # Find nearest interim goal from the current step in Try-path
                     new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                    print("Nächstes Ziel-Interim: ", new_result_interim)               
+                    # print("Nächstes Ziel-Interim: ", new_result_interim)               
                     
                     # Check if the distance to the new interim is zero (Interim is reached)
                     if new_result_interim[1] == 0.0:
-                        print("Ziel-Interim erreicht")
+                        # print("Ziel-Interim erreicht")
                         
                         # Check if there is only one interim goal remaining, this means all interims are reached
                         if (len(checkedInterimGoalList) == 1 ):
@@ -250,7 +248,7 @@ class BasicPRM(IPPRMBase.PRMBase):
 
                         # Calculate the shortest distance to the new interim goal
                         result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                        print("Neues Ziel-Interim: ", result_interim)
+                        # print("Neues Ziel-Interim: ", result_interim)
                         
                         # Get the node name of current step based on coordinates
                         nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
@@ -261,12 +259,12 @@ class BasicPRM(IPPRMBase.PRMBase):
                         # Remove first step of Try-Path because it is already reached
                         try_path.pop(0)
 
-                        print("Neuer Trypath: ", try_path)
+                        # print("Neuer Trypath: ", try_path)
                         break
 
                     if new_result_interim != result_interim:
                         
-                        print("NewResultInterim !!!=== ResultInterim")
+                        # print("NewResultInterim !!!=== ResultInterim")
                         
                         result_interim = new_result_interim
                         
@@ -279,119 +277,14 @@ class BasicPRM(IPPRMBase.PRMBase):
                         # Remove first step of Try-Path because it is already reached
                         try_path.pop(0)
 
-                        print("Neuer Trypath: ", try_path)
+                        # print("Neuer Trypath: ", try_path)
                         break
             
             HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
             
-            # # Calculate shortest distance to nearest interim from start 
-            # result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
-            # print("Result:" + str(result_interim))
-            
-            # # Plan path from start to nearest interim
-            # try_path = nx.shortest_path(self.graph, "start", result_interim[2])
-            # print("PFAD: "+ str(try_path)+ str(type(try_path)))
-            
-            # # Initialize path and loop break condition
-            # path = list()
-            # breakcondition = False
-            
-            # # Loop to iteratively plan a path through interim goals
-            # while not breakcondition:
-            # #print(breakcondition)
-                    
-            #     print("TRYPATH :" + str(try_path))
-                
-            #     # Iterate through steps in the current try_path
-            #     for step in try_path:
-            #         print("for-schleife beginnt")
-                    
-            #         # Find nearest interim goal from the current step in Try-path
-            #         new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                    
-            #         # print("new_result_interim"+ str(new_result_interim))
-                    
-            #         # Check if the new interim goal is the same as the previous one
-            #         if new_result_interim[2] == result_interim[2]:
-                        
-            #             # Add step to the final path
-            #             path.append(step)
-                        
-            #             print("aktuelles Interim" + str(result_interim))
-            #             print("Abstand" + str(new_result_interim[1]))
-                        
-            #             # Check if the distance to the new interim is zero (Interim is reached)
-            #             if new_result_interim[1] == 0.0:
-            #                 print("DER ABSTAND IST NULL")
-                            
-            #                 # Get the node name of current step based on coordinates
-            #                 nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
-            #                 print("Akutlele Interim Golalist: " +str(checkedInterimGoalList))
-                            
-            #                 # Check if there is only one interim goal remaining, this means all interims are reached
-            #                 if (len(checkedInterimGoalList) == 1 ):
-                                
-            #                     # End the loop
-            #                     breakcondition = True
-            #                     break
-                            
-            #                 # Remove the current interim goal from the list
-            #                 else:
-            #                     checkedInterimGoalList.remove(result_interim[0])
-
-            #                 # Calculate the shortest distance to the new interim goal
-            #                 result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                            
-            #                 # Plan a new path from the current position to the new interim goal
-            #                 try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
-                            
-            #                 break
-
-            #         # If new interim goal is not the same as the current one  
-            #         else:
-            #             print("bin im Else")
-                        
-            #             # Update the current interim goal through the new interim goal information
-            #             result_interim = new_result_interim
-                        
-            #             # Get the node name of current step based on coordinates
-            #             nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
-                        
-            #             # Plan a new try path from the current position to the new interim goal
-            #             try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
-
-            #             break
-               
-            # print("Kompletter Pfad: "+ str(path))
         except Exception as e :
             print("Fehler " + str(e))
             return []
         
         # Return final path
         return path
-    
-
-
-        """
-        # wie wolln wir vorgehen
-        
-        # schleife die schaut was von anderen Interims der nächste ist
-        # kann interium Punkt 1 ohne Kollision zum nächsten
-        # falls JA: -> fügs in die liste ein -> dann ist das der shortest Path
-        # falls Nein: wiederhole das und machs beim näctsen
-        # wenn kein Interium mit den Bedgingungen gefunden wird, verbinde Node mit nächstem Interim auch wenn der Kollidiert
-        
-        # Neue Idee:
-        
-        # 1. Ausgabe Pfad von Start bis nähestes Interim
-        # nx.shortestPath (Start, neartestInterium)
-        
-        # 2. Wir nehmen dann die erste Node aus dem Pfad, nach Start (Node A)
-        # 3. Dann rufen wir nearest Neighbour, wir wollen den Abstand von der aktuellen Node allen Interiums
-        # 3b. Abgleichen mit Liste die schon abgehakt ist, wegschmeißen der Interium die schon verplant sind
-        # 4. Interim mit dem kleinesten Abstand wird das nächste ZWischenziel -> Interim B
-        # 5. nx.shorestPath (Node A, Interim B)
-        # 6. gehe wieder zu 2
-        # wenn wir durch alle Interiums durch sind (interimGoal = Liste aus 3b ), verbindung mit dem Ziel
-        
-        """
