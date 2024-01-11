@@ -24,7 +24,7 @@ trapField = dict()
 trapField["obs1"] =   LineString([(6, 18), (6, 8), (16, 8), (16,18)]).buffer(1.0)
 description = "Following the direct connection from goal to start would lead the algorithm into a trap."
 #benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[10,20]], [[10,15], [20,10]], [[10,1]], description, 2))
-benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[9,15]], [[3,10],[22,8],[3,3],[20,15]],[[10,1]], description, 2))
+benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[9,15]], [[3,9],[19,8],[3,3],[20,15]],[[10,1]], description, 2))
 
 # , [[10,1]
 
