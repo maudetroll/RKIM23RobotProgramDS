@@ -48,7 +48,6 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
     amountIterims = nodesToString.count('interim')
     
     # loop to visualize the interims in the plot
-    print("Nodelist ", graph.nodes())
     i = 0
     for interim in range(amountIterims):
         name = "interim" + str(i)
@@ -56,7 +55,6 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
                                     node_size=nodeSize,
                                     node_color='Dodgerblue',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={name: "I"},  ax = ax)
-        print("InterimsName ", name)
         i += 1
 
 '''
