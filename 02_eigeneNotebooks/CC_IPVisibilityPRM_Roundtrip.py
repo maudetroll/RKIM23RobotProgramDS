@@ -94,6 +94,32 @@ class VisPRM(PRMBase):
         # Return the information of the nearest interim goal
         return [result_interim[0][minimum_index], result_interim[1][minimum_index],result_interim[2][minimum_index]]
 
+    @IPPerfMonitor
+    def _checkConnectableInterims(self, checkedStartList,checkedInterimGoalList):
+        checkedInterimGoalList.append(checkedStartList[0])
+        print("Gesamte Liste: ", checkedInterimGoalList)
+
+        
+        for x in range(len(checkedInterimGoalList)):
+            print("X " ,x )
+            for y in range(len(checkedInterimGoalList)):
+                y = y + 1
+                if (y > 5):
+                    break 
+                print("y " ,y )
+
+                if  self.graph.has_edge(self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[y]),self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[x])):
+                    HelperClass.HelperClass.printInColor("Interim schon verbunden, keine Neue","red")
+                    #continue
+                    break
+
+                if self._isVisible(checkedInterimGoalList[x],checkedInterimGoalList[y])  == True and checkedInterimGoalList[x] != checkedInterimGoalList[y]:
+                    self.graph.add_edge(self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[x]), self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[y]))
+                    print("Kante hinzugefügt")
+
+        
+    
+                        
     # rufe das nur auf, wenn wir auf einem Interrim sind
     @IPPerfMonitor
     def _findNearestInterim(self,currentNode,checkedInterimGoalList):
@@ -226,7 +252,7 @@ class VisPRM(PRMBase):
 
             print("node added ", nameOfNode)
 
-
+        self._checkConnectableInterims(checkedStartList,checkedInterimGoalList)
 
         # 2. learn Roadmap
         self._learnRoadmap(config["ntry"], checkedInterimGoalList)
