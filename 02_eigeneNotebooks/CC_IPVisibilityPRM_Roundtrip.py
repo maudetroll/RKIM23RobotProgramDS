@@ -110,39 +110,10 @@ class VisPRM(PRMBase):
                 if self._isVisible(checkedInterimGoalList[x],checkedInterimGoalList[y])  == True and checkedInterimGoalList[x] != checkedInterimGoalList[y]:
                     self.graph.add_edge(self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[x]), self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[y]))
             y = y + 1
-        
-    
-                        
-    # rufe das nur auf, wenn wir auf einem Interrim sind
-    @IPPerfMonitor
-    def _findNearestInterim(self,currentNode,checkedInterimGoalList):
-        # List 1: Coordinates
-        # List 2: Distance
-        # List 3: Name
-        interimAndLength = [[],[],[]]
-
-        for interim in checkedInterimGoalList:
-
-            try:
-                pathBetweenInterims = nx.shortest_path(self.graph,self._getNodeNamebasedOnCoordinates(currentNode),self._getNodeNamebasedOnCoordinates(interim))
-                lenPathBetweenInterims = len(pathBetweenInterims)
-                interimAndLength[0].append(interim)
-                interimAndLength[2].append(self._getNodeNamebasedOnCoordinates(interim))
-                interimAndLength[1].append(lenPathBetweenInterims)
-
-            except:
-                traceback.print_exc()
-
-                
-        
-        minimum_value = min(interimAndLength[2])
-        minimum_index = interimAndLength[2].index(minimum_value)
-
-        return [interimAndLength[0][minimum_index], interimAndLength[1][minimum_index],interimAndLength[2][minimum_index]]
 
 
     @IPPerfMonitor
-    def _learnRoadmap(self, ntry, checkedInterimGoalList):
+    def _learnRoadmap(self, ntry):
         zt = 0
         nodeNumber = 0
         currTry = 0
@@ -230,7 +201,7 @@ class VisPRM(PRMBase):
         checkedInterimGoalList.remove(checkedStartList[0])
 
         # 2. learn Roadmap
-        self._learnRoadmap(config["ntry"], checkedInterimGoalList)
+        self._learnRoadmap(config["ntry"])
 
         # print("checkedInterimGoalList ", checkedInterimGoalList)
         try:
@@ -304,9 +275,11 @@ class VisPRM(PRMBase):
                     if new_result_interim != result_interim:
                         
                         # print("NewResultInterim !!!=== ResultInterim")
-                        
-                        # old_resultInterim = result_interim
+                       
+                        old_resultInterim = result_interim
                         result_interim = new_result_interim
+                        
+                        
                         
                         # Get the node name of current step based on coordinates
                         
@@ -320,14 +293,17 @@ class VisPRM(PRMBase):
                         # print("Neuer Trypath: ", try_path)
 
                         # Avoid looping
-
-                        # if try_path[0] == path[-2]:
-                        #     try_path = nx.shortest_path(self.graph,nodeName,old_resultInterim[2])
-                        #     try_path.pop(0)
-                        #     result_interim = old_resultInterim
-                        #     print("")
-                        #     print("LOOP VERHINDERT")
-                        #     print("Neuer Trypath: ", try_path)
+                        
+                        if len(path) > 2:
+                            
+                            if path[-1] == path[-3] and try_path[0] == path[-2]:
+                                # print("old_resultInterim", old_resultInterim)
+                                try_path = nx.shortest_path(self.graph,nodeName,old_resultInterim[2])
+                                try_path.pop(0)
+                                result_interim = old_resultInterim
+                                # print("")
+                                # print("LOOP VERHINDERT")
+                                # print("Neuer Trypath: ", try_path)
 
 
                         break
