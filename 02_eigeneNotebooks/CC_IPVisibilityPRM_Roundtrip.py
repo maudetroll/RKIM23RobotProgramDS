@@ -103,9 +103,8 @@ class VisPRM(PRMBase):
         for x in range(len(checkedInterimGoalList)):
             print("X " ,x )
             for y in range(len(checkedInterimGoalList)):
-                y = y + 1
-                if (y > 5):
-                    break 
+                
+
                 print("y " ,y )
 
                 if  self.graph.has_edge(self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[y]),self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[x])):
@@ -116,7 +115,7 @@ class VisPRM(PRMBase):
                 if self._isVisible(checkedInterimGoalList[x],checkedInterimGoalList[y])  == True and checkedInterimGoalList[x] != checkedInterimGoalList[y]:
                     self.graph.add_edge(self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[x]), self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[y]))
                     print("Kante hinzugefügt")
-
+            y = y + 1
         
     
                         
