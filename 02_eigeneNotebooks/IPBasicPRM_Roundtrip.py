@@ -265,7 +265,9 @@ class BasicPRM(IPPRMBase.PRMBase):
                     if new_result_interim != result_interim:
                         
                         # print("NewResultInterim !!!=== ResultInterim")
-                        
+                        # Save previous interim for case of looping
+                        old_resultInterim = result_interim
+
                         result_interim = new_result_interim
                         
                         # Get the node name of current step based on coordinates
@@ -278,6 +280,19 @@ class BasicPRM(IPPRMBase.PRMBase):
                         try_path.pop(0)
 
                         # print("Neuer Trypath: ", try_path)
+
+                        # Avoid looping by detecting recurrent pattern in path, using old interim to break loop
+                        
+                        if len(path) > 2:
+                            
+                            if path[-1] == path[-3] and try_path[0] == path[-2]:
+                                # print("old_resultInterim", old_resultInterim)
+                                try_path = nx.shortest_path(self.graph,nodeName,old_resultInterim[2])
+                                try_path.pop(0)
+                                result_interim = old_resultInterim
+                                # print("")
+                                # print("LOOP VERHINDERT")
+                                # print("Neuer Trypath: ", try_path)
                         break
             
             HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
