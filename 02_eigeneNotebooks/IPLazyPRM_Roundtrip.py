@@ -295,55 +295,49 @@ class LazyPRM(PRMBase):
                     else:
                         print("Keine Kollission erkannt")
                         path.append(step)
+
+                        HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
+                        
                         coordinatesLastPathEle.append(self.graph.nodes()[step]['pos'])
                         new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
+                        print("Ziel-Interim: " + str(new_result_interim))
+
+                        if new_result_interim == result_interim:
+                            print("Ziel gleich geblieben: ", new_result_interim)
+                            continue                                    
+                    
+                        # Check if the distance to the new interim is zero (Interim is reached)
+                        if new_result_interim[1] == 0.0:
+                            print("Interim ist erreicht!")
+                                                       
+                            subPath = path[path.index(oldInterim[2]):]
                         
-                        if new_result_interim != result_interim:
-                            print("Neues Interrim: ", new_result_interim)
+                            print("SubPath rein: ", subPath)
+
+                            while(self._findDuplicate(subPath) != []):
+                                duplicate = self._findDuplicate(subPath)
+                                modSubPath = self._removeDuplicate(subPath, duplicate)
+                                subPath = modSubPath
+
+                            if subPath != path[path.index(oldInterim[2]):]:
+                                path = path[:path.index(oldInterim[2])] + subPath
+
+                            print("Modifizierter Pfad: ", path)
+                            # Check if there is only one interim goal remaining, this means all interims are reached
+                            if (len(checkedInterimGoalList) == 1 ):
+                                
+                                # End the loop
+                                breakcondition = True
+                                break
+                                
+                            # Remove the current interim goal from the list
+                            print("checkedInterimGoalList: ", checkedInterimGoalList)
+                            oldInterim = new_result_interim
+                            checkedInterimGoalList.remove(new_result_interim[0])
+                            print("checkedInterimGoalList: ", checkedInterimGoalList)
+                            print("Gerade entfernt: ", new_result_interim[0])
                             
-                            result_interim = new_result_interim
-                            nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
-
-                            try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
-                            try_path.pop(0)
-                        
-                    
-                    HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
-                    print("Ziel-Interim: " + str(new_result_interim))
-                    
-                    # Check if the distance to the new interim is zero (Interim is reached)
-                    if new_result_interim[1] == 0.0:
-                        print("Interim ist erreicht!")
-                                                    
-                        subPath = path[path.index(oldInterim[2]):]
-                    
-                        print("SubPath rein: ", subPath)
-
-                        while(self._findDuplicate(subPath) != []):
-                            duplicate = self._findDuplicate(subPath)
-                            modSubPath = self._removeDuplicate(subPath, duplicate)
-                            subPath = modSubPath
-                            print("subpath aus while: ", subPath)
-                            print(self._findDuplicate(subPath))
-                            print("")
-                        print("While beendet")
-
-                        if subPath != path[path.index(oldInterim[2]):]:
-                            path = path[:path.index(oldInterim[2])] + subPath
-
-                        print("Modifizierter Pfad: ", path)
-                        # Check if there is only one interim goal remaining, this means all interims are reached
-                        if (len(checkedInterimGoalList) == 1 ):
                             
-                            # End the loop
-                            breakcondition = True
-                            break
-                            
-                        # Remove the current interim goal from the list
-                        else:
-
-                            checkedInterimGoalList.remove(result_interim[0])
-                            oldInterim = result_interim
                             # Calculate the shortest distance to the new interim goal
                             result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
                             print("Neues Ziel-Interim verfügbar!: ", result_interim)
