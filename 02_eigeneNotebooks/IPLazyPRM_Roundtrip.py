@@ -153,43 +153,40 @@ class LazyPRM(PRMBase):
             #    if x != y:
 
             self.nonCollidingEdges.append((step,path))
-                    # print("NONColliding Edges: "+ str(self.nonCollidingEdges))
-    
-                                                                                          
-            
+                    # print("NONColliding Edges: "+ str(self.nonCollidingEdges)) 
         return False
     
+    def _findDuplicate(self, subPath):
+        # print("subPath: ", subPath)
         
-    @IPPerfMonitor
-    def _checkForCollisionAndUpdate_MS(self,path):
-        # first check all nodes
-        for nodeNumber in path:
-            if self._collisionChecker.pointInCollision(self.graph.nodes[nodeNumber]['pos']):
-                print("Removed nodeNumber: "+ str(nodeNumber))
-                self.graph.remove_node(nodeNumber)
+        duplicate = []
+        
+        for i in range(len(subPath)):
+            for j in range(i + 1, len(subPath)):
                 
-                return True
-        
-        # check all path segments
-              
-        for elem in zip(path,path[1:]):
-            #print elem
-            x = elem[0]
-            y = elem[1]
-            if self._collisionChecker.lineInCollision(self.graph.nodes()[x]['pos'],self.graph.nodes()[y]['pos']):
-                self.graph.remove_edge(x,y)
-                self.collidingEdges.append((x,y))
-                # print("Colliding Edges: "+ str(self.collidingEdges))
-                return True
-            else:
-                # Verhindern damit Interim nicht mit sich selbst verbindet
-            #    if x != y:
-                self.nonCollidingEdges.append((x,y))
-                    # print("NONColliding Edges: "+ str(self.nonCollidingEdges))
+                if subPath[i] == subPath[j] and subPath[i] not in duplicate:
+                    duplicate.append(subPath[i])
 
-                                                                                          
-            
-        return False
+        # print("Gefundene Duplikate: ", duplicate)
+        
+        if duplicate == []:
+            return []
+        
+        return duplicate[0]
+
+    def _removeDuplicate(self, subPath, duplicate):
+        
+        # find index of duplicate
+        indexList = [index for index, element in enumerate(subPath) if element == duplicate]
+        # print("IndexList: ", indexList)
+        start = indexList[0]
+        end = indexList[-1]
+        modSubPath = subPath[:start + 1] + subPath[end + 1:]
+
+
+        # print("modSubPath: ", modSubPath)
+        
+        return modSubPath
         
     @IPPerfMonitor   
     def planRoundPath(self, startList, interimGoalList, goalList, config):
@@ -261,7 +258,7 @@ class LazyPRM(PRMBase):
 
 
             coordinatesLastPathEle.append(checkedStartList[0])
-            
+            oldInterim = [[],[],'start']
             # Loop to iteratively plan a path through interim goals
             while not breakcondition and maxTry < maxIterations:
 
@@ -272,14 +269,6 @@ class LazyPRM(PRMBase):
                     
                     HelperClass.HelperClass.printInColor("for-schleife beginnt", 'green')
                     print("Aktueller Node (step): ", step)
-
-                    if step in path:
-                        # if pfadteil (path[path.index(step):]) beinhaltet interim,
-                            # if dieses interim ist nicht in checkedInterimGoalList, dann nicht löschen
-                        path = path[:path.index(step)]
-                        print("Pfad geleert weil doppelt. Neuer Pfad: ", path)
-
-                    #     continue
 
                     
                     # Check for collision
@@ -325,7 +314,24 @@ class LazyPRM(PRMBase):
                     # Check if the distance to the new interim is zero (Interim is reached)
                     if new_result_interim[1] == 0.0:
                         print("Interim ist erreicht!")
-                        
+                                                    
+                        subPath = path[path.index(oldInterim[2]):]
+                    
+                        print("SubPath rein: ", subPath)
+
+                        while(self._findDuplicate(subPath) != []):
+                            duplicate = self._findDuplicate(subPath)
+                            modSubPath = self._removeDuplicate(subPath, duplicate)
+                            subPath = modSubPath
+                            print("subpath aus while: ", subPath)
+                            print(self._findDuplicate(subPath))
+                            print("")
+                        print("While beendet")
+
+                        if subPath != path[path.index(oldInterim[2]):]:
+                            path = path[:path.index(oldInterim[2])] + subPath
+
+                        print("Modifizierter Pfad: ", path)
                         # Check if there is only one interim goal remaining, this means all interims are reached
                         if (len(checkedInterimGoalList) == 1 ):
                             
@@ -335,8 +341,9 @@ class LazyPRM(PRMBase):
                             
                         # Remove the current interim goal from the list
                         else:
+
                             checkedInterimGoalList.remove(result_interim[0])
-                            
+                            oldInterim = result_interim
                             # Calculate the shortest distance to the new interim goal
                             result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
                             print("Neues Ziel-Interim verfügbar!: ", result_interim)
@@ -357,9 +364,6 @@ class LazyPRM(PRMBase):
             if maxTry == maxIterations:
                 path = []
             HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
-
-            if ('start' in HelperClass.HelperClass.find_duplicates(path)):
-                HelperClass.HelperClass.printInColor("START Doppelt", 'red')
 
             return path
         
