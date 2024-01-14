@@ -199,11 +199,9 @@ class BasicPRM(IPPRMBase.PRMBase):
         try:
             # Calculate shortest distance to nearest interim from start 
             result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
-            # print("Ziel Interim:" + str(result_interim))
             
             # Plan path from start to nearest interim
             try_path = nx.shortest_path(self.graph, "start", result_interim[2])
-            # print("Try Path: "+ str(try_path))
 
             # Initialize path and loop break condition
             path = list()
@@ -211,16 +209,10 @@ class BasicPRM(IPPRMBase.PRMBase):
             
             # Loop to iteratively plan a path through interim goals
             while not breakcondition:
-                # print("")
-                # print("While Schleife beginnt")
-                    
-                # print("TRYPATH :",(try_path))
                 
                 # Iterate through steps in the current try_path
                 for step in try_path:
-                    # print("")
-                    # print("For-Schleife beginnt")
-                    # print("Aktueller Node (step): ", step)
+
                     
                     # Add step to the final path
                     path.append(step)
@@ -228,11 +220,9 @@ class BasicPRM(IPPRMBase.PRMBase):
                     
                     # Find nearest interim goal from the current step in Try-path
                     new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                    # print("Nächstes Ziel-Interim: ", new_result_interim)               
                     
                     # Check if the distance to the new interim is zero (Interim is reached)
                     if new_result_interim[1] == 0.0:
-                        # print("Ziel-Interim erreicht")
                         
                         # Check if there is only one interim goal remaining, this means all interims are reached
                         if (len(checkedInterimGoalList) == 1 ):
@@ -248,7 +238,6 @@ class BasicPRM(IPPRMBase.PRMBase):
 
                         # Calculate the shortest distance to the new interim goal
                         result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                        # print("Neues Ziel-Interim: ", result_interim)
                         
                         # Get the node name of current step based on coordinates
                         nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
@@ -259,12 +248,10 @@ class BasicPRM(IPPRMBase.PRMBase):
                         # Remove first step of Try-Path because it is already reached
                         try_path.pop(0)
 
-                        # print("Neuer Trypath: ", try_path)
                         break
 
                     if new_result_interim != result_interim:
                         
-                        # print("NewResultInterim !!!=== ResultInterim")
                         # Save previous interim for case of looping
                         old_resultInterim = result_interim
 
@@ -279,20 +266,15 @@ class BasicPRM(IPPRMBase.PRMBase):
                         # Remove first step of Try-Path because it is already reached
                         try_path.pop(0)
 
-                        # print("Neuer Trypath: ", try_path)
-
                         # Avoid looping by detecting recurrent pattern in path, using old interim to break loop
-                        
                         if len(path) > 2:
                             
                             if path[-1] == path[-3] and try_path[0] == path[-2]:
-                                # print("old_resultInterim", old_resultInterim)
+
                                 try_path = nx.shortest_path(self.graph,nodeName,old_resultInterim[2])
                                 try_path.pop(0)
                                 result_interim = old_resultInterim
-                                # print("")
-                                # print("LOOP VERHINDERT")
-                                # print("Neuer Trypath: ", try_path)
+
                         break
             
             HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
