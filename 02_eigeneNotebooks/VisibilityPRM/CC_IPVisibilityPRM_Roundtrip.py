@@ -160,8 +160,13 @@ class VisPRM(PRMBase):
                 currTry = 0
             else:
                 currTry += 1
+                print("curtry ", currTry)
+                if (currTry == ntry):
+                    break
+                
 
             nodeNumber += 1
+            
 
     @IPPerfMonitor
     def planRoundPath(self, startList, interimGoalList, goalList, config):
@@ -201,6 +206,7 @@ class VisPRM(PRMBase):
         checkedInterimGoalList.remove(checkedStartList[0])
 
         # 2. learn Roadmap
+        print("ntry ", config["ntry"])
         self._learnRoadmap(config["ntry"])
 
         # print("checkedInterimGoalList ", checkedInterimGoalList)

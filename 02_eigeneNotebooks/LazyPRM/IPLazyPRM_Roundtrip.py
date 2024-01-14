@@ -271,7 +271,7 @@ class LazyPRM(PRMBase):
                     print("Aktueller Node (step): ", step)
 
                     
-                    # Check for collision
+                    # Check for collision between current step and last path element
                     if self._checkForCollisionAndUpdate(self.graph.nodes[step]['pos'], coordinatesLastPathEle[-1]):
                         print("")
                         print("Kollision erkannt")

@@ -91,6 +91,24 @@ class VisPRM(PRMBase):
         
         # Return the information of the nearest interim goal
         return [result_interim[0][minimum_index], result_interim[1][minimum_index],result_interim[2][minimum_index]]
+    
+
+    @IPPerfMonitor
+    def _checkConnectableInterims(self, checkedStartList,checkedInterimGoalList):
+        checkedInterimGoalList.append(checkedStartList[0])
+
+        
+        for x in range(len(checkedInterimGoalList)):
+            for y in range(len(checkedInterimGoalList)):
+                
+                if  self.graph.has_edge(self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[y]),self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[x])):
+                    # HelperClass.HelperClass.printInColor("Interim schon verbunden, keine Neue","red")
+                    #continue
+                    break
+
+                if self._isVisible(checkedInterimGoalList[x],checkedInterimGoalList[y])  == True and checkedInterimGoalList[x] != checkedInterimGoalList[y]:
+                    self.graph.add_edge(self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[x]), self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[y]))
+            y = y + 1
 
 
     @IPPerfMonitor
@@ -164,6 +182,17 @@ class VisPRM(PRMBase):
         
         # Add Goallist to InterimGoalList
         checkedInterimGoalList.append(checkedGoalList[0])
+        
+        
+        self.graph.add_node("start", pos=checkedStartList[0], color='lawngreen',nodeType = 'Guard')
+        self.statsHandler.addNodeAtPos("start", checkedStartList[0])
+
+        for interimGoal in range(len(checkedInterimGoalList)):
+            nameOfNode = "interim" + str(interimGoal)
+            self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal], color='Dodgerblue',nodeType = 'Guard')
+            self.statsHandler.addNodeAtPos(nameOfNode, checkedInterimGoalList[interimGoal])
+        
+        self._checkConnectableInterims(checkedStartList,checkedInterimGoalList)
 
         # 2. learn Roadmap
         self._learnRoadmap(config["ntry"])
@@ -217,7 +246,7 @@ class VisPRM(PRMBase):
             breakcondition = False
             
             # Loop to iteratively plan a path through interim goals
-            while not breakcondition:
+            while not breakcondition and try_path !=[]:
                 print("")
                 print("While Schleife beginnt")
                     
@@ -251,7 +280,7 @@ class VisPRM(PRMBase):
                         # Remove the current interim goal from the list
                         else:
                         
-                            checkedInterimGoalList.remove(result_interim[0])
+                            checkedInterimGoalList.remove(new_result_interim[0])
 
                         # Calculate the shortest distance to the new interim goal
                         result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
