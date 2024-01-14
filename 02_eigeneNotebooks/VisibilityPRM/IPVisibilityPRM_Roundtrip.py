@@ -193,45 +193,11 @@ class VisPRM(PRMBase):
             self.statsHandler.addNodeAtPos(nameOfNode, checkedInterimGoalList[interimGoal])
         
         self._checkConnectableInterims(checkedStartList,checkedInterimGoalList)
+        checkedInterimGoalList.remove(checkedStartList[0])
 
         # 2. learn Roadmap
         self._learnRoadmap(config["ntry"])
-
-        # 3. find connection of start and goal to roadmap
-        # find nearest, collision-free connection between node on graph and start
-        posList = nx.get_node_attributes(self.graph,'pos')
-        kdTree = cKDTree(list(posList.values()))
         
-        result = kdTree.query(checkedStartList[0],k=5)
-        for node in result[1]:
-            if not self._collisionChecker.lineInCollision(checkedStartList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
-                 self.graph.add_node("start", pos=checkedStartList[0], color='lawngreen')
-                 self.graph.add_edge("start", list(posList.keys())[node])
-                 break
-        
-        # Iterate through each interim goal in the list
-        for interimGoal in range(len(checkedInterimGoalList)):
-
-            # print("Was steht in der Liste: " + str(checkedInterimGoalList[interimGoal]))
-            result = kdTree.query(checkedInterimGoalList[interimGoal],k=5)
-            
-            # Create a unique name for the current interim goal node
-            nameOfNode = "interim" + str(interimGoal)
-
-            for node in result[1]:
-                if not self._collisionChecker.lineInCollision(checkedInterimGoalList[interimGoal],self.graph.nodes()[list(posList.keys())[node]]['pos']):
-                     self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal], color='Dodgerblue')
-                     self.graph.add_edge(nameOfNode, list(posList.keys())[node])
-                     break
-                    
-                    
-        result = kdTree.query(checkedGoalList[0],k=5)
-        for node in result[1]:
-            if not self._collisionChecker.lineInCollision(checkedGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
-                 self.graph.add_node("goal", pos=checkedGoalList[0], color='Dodgerblue')
-                 self.graph.add_edge("goal", list(posList.keys())[node])
-                 break
-      
         try:
             # Calculate shortest distance to nearest interim from start 
             result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
