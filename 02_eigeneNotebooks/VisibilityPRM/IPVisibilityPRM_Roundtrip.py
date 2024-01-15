@@ -154,6 +154,7 @@ class VisPRM(PRMBase):
                 currTry += 1
 
             nodeNumber += 1
+            print("Nodenumber: ", nodeNumber)
 
     @IPPerfMonitor
     def planRoundPath(self, startList, interimGoalList, goalList, config):
