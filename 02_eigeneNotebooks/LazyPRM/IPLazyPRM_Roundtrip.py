@@ -254,7 +254,7 @@ class LazyPRM(PRMBase):
                     else:
                         path.append(step)
 
-                        HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
+                        # HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
                         
                         coordinatesLastPathEle.append(self.graph.nodes()[step]['pos'])
                         new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
@@ -311,10 +311,10 @@ class LazyPRM(PRMBase):
             return path
         
         except Exception as e:
-            HelperClass.HelperClass.printInColor("Kein Pfad gefunden", 'orange')
-            print("MaxTry: "+ str(maxTry) + " Fehler: " + str(e))
+            HelperClass.HelperClass.printInColor("No Path found", 'red')
+            # print("MaxTry: "+ str(maxTry) + " Fehler: " + str(e))
             import traceback
-            traceback.print_exc()
+            # traceback.print_exc()
 
         return []
 

@@ -216,7 +216,7 @@ class BasicPRM(IPPRMBase.PRMBase):
                     
                     # Add step to the final path
                     path.append(step)
-                    HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
+                    # HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
                     
                     # Find nearest interim goal from the current step in Try-path
                     new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
@@ -280,7 +280,8 @@ class BasicPRM(IPPRMBase.PRMBase):
             HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
             
         except Exception as e :
-            print("Fehler " + str(e))
+            # print("Fehler " + str(e))
+            HelperClass.HelperClass.printInColor("No Path found!", 'red')
             return []
         
         # Return final path
