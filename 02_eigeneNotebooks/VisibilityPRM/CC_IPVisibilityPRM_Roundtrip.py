@@ -6,12 +6,12 @@ This code is part of the course "Introduction to robot path planning" (Author: B
 License is based on Creative Commons: Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) (pls. check: http://creativecommons.org/licenses/by-nc/4.0/)
 """
 
-from IPPRMBase import PRMBase
+from HelperPackage.IPPRMBase import PRMBase
 import networkx as nx
 from scipy.spatial import cKDTree
-from IPPerfMonitor import IPPerfMonitor
+from HelperPackage.IPPerfMonitor import IPPerfMonitor
 from scipy.spatial.distance import euclidean
-import HelperClass
+from HelperPackage import HelperClass
 import traceback
 
 

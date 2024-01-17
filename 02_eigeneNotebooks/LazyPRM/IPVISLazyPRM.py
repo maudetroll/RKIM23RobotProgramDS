@@ -7,8 +7,7 @@ License is based on Creative Commons: Attribution-NonCommercial 4.0 Internationa
 """
 
 import networkx as nx
-import HelperClass
-
+from HelperPackage import HelperClass
 
 def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
     graph = planner.graph.copy()

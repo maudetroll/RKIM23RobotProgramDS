@@ -7,8 +7,7 @@ License is based on Creative Commons: Attribution-NonCommercial 4.0 Internationa
 """
 
 import networkx as nx
-import HelperClass
-
+from HelperPackage import HelperClass
 
 def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
     graph = planner.graph.copy()
@@ -101,9 +100,6 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
         
         #Gsp = nx.subgraph(graph,solution)
         solGraph = nx.Graph()
-        
-        if ('start' in HelperClass.HelperClass.find_duplicates(solution)):
-            HelperClass.HelperClass.printInColor("START Doppelt", 'red')
             
         
         for i in range(len(solution) - 1):

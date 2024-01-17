@@ -6,13 +6,13 @@ This code is part of the course "Introduction to robot path planning" (Author: B
 License is based on Creative Commons: Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) (pls. check: http://creativecommons.org/licenses/by-nc/4.0/)
 """
 
-import IPPRMBase
-from IPPerfMonitor import IPPerfMonitor
+from HelperPackage import IPPRMBase
+from HelperPackage.IPPerfMonitor import IPPerfMonitor
 import networkx as nx
 import random
 import numpy as np
 import math
-import HelperClass
+from HelperPackage import HelperClass
 
 
 # reduce coding effort by using function provided by scipy

@@ -6,12 +6,12 @@ This code is part of the course "Introduction to robot path planning" (Author: B
 License is based on Creative Commons: Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) (pls. check: http://creativecommons.org/licenses/by-nc/4.0/)
 """
 
-from IPPRMBase import PRMBase
+from HelperPackage.IPPRMBase import PRMBase
 import networkx as nx
 from scipy.spatial import cKDTree
-from IPPerfMonitor import IPPerfMonitor
+from HelperPackage.IPPerfMonitor import IPPerfMonitor
 from scipy.spatial.distance import euclidean
-import HelperClass
+from HelperPackage import HelperClass
 import traceback
 
 
@@ -103,8 +103,6 @@ class VisPRM(PRMBase):
             for y in range(len(checkedInterimGoalList)):
                 
                 if  self.graph.has_edge(self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[y]),self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[x])):
-                    # HelperClass.HelperClass.printInColor("Interim schon verbunden, keine Neue","red")
-                    #continue
                     break
 
                 if self._isVisible(checkedInterimGoalList[x],checkedInterimGoalList[y])  == True and checkedInterimGoalList[x] != checkedInterimGoalList[y]:
@@ -160,7 +158,6 @@ class VisPRM(PRMBase):
                 currTry = 0
             else:
                 currTry += 1
-                print("curtry ", currTry)
                 if (currTry == ntry):
                     break
                 
@@ -200,24 +197,20 @@ class VisPRM(PRMBase):
             self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal], color='Dodgerblue',nodeType = 'Guard')
             self.statsHandler.addNodeAtPos(nameOfNode, checkedInterimGoalList[interimGoal])
 
-            # print("node added ", nameOfNode)
-
         self._checkConnectableInterims(checkedStartList,checkedInterimGoalList)
         checkedInterimGoalList.remove(checkedStartList[0])
 
         # 2. learn Roadmap
-        print("ntry ", config["ntry"])
+
         self._learnRoadmap(config["ntry"])
 
-        # print("checkedInterimGoalList ", checkedInterimGoalList)
         try:
             # Calculate shortest distance to nearest interim from start 
             result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
-            # print("Ziel Interim:" + str(result_interim))
+
             
             # Plan path from start to nearest interim
             try_path = nx.shortest_path(self.graph, "start", result_interim[2])
-            # print("Try Path: "+ str(try_path))
 
             # Initialize path and loop break condition
             path = list()
@@ -225,29 +218,21 @@ class VisPRM(PRMBase):
             
             # Loop to iteratively plan a path through interim goals
             while not breakcondition:
-                # print("")
-                # print("While Schleife beginnt")
-                    
-                # print("TRYPATH :",(try_path))
                 
                 # Iterate through steps in the current try_path
                 for step in try_path:
-                    # print("")
-                    # print("For-Schleife beginnt")
-                    # print("Aktueller Node (step): ", step)
                     
                     # Add step to the final path
                     path.append(step)
-                    HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
+                    # HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
                     
                     # Find nearest interim goal from the current step in Try-path
                     new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                    # print("Nächstes Ziel-Interim: ", new_result_interim)               
+       
                     
                     # Check if the distance to the new interim is zero (Interim is reached)
                     if new_result_interim[1] == 0.0:
-                        # print("Ziel-Interim erreicht")
-                        
+
                         # Check if there is only one interim goal remaining, this means all interims are reached
                         if (len(checkedInterimGoalList) == 1 ):
                             
@@ -259,13 +244,10 @@ class VisPRM(PRMBase):
                         else:
                         
                             checkedInterimGoalList.remove(new_result_interim[0])
-                            # print("Element removed: ", new_result_interim[0])
-                            # print("new interim goallsit: ", checkedInterimGoalList )
 
                         # Calculate the shortest distance to the new interim goal
                         result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-                        # print("Neues Ziel-Interim: ", result_interim)
-                        
+
                         # Get the node name of current step based on coordinates
                         nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
 
@@ -275,12 +257,10 @@ class VisPRM(PRMBase):
                         # Remove first step of Try-Path because it is already reached
                         try_path.pop(0)
 
-                        # print("Neuer Trypath: ", try_path)
                         break
 
                     if new_result_interim != result_interim:
                         
-                        # print("NewResultInterim !!!=== ResultInterim")
                        
                         old_resultInterim = result_interim
                         result_interim = new_result_interim
@@ -296,29 +276,23 @@ class VisPRM(PRMBase):
                         # Remove first step of Try-Path because it is already reached
                         try_path.pop(0)
 
-                        # print("Neuer Trypath: ", try_path)
-
                         # Avoid looping
                         
                         if len(path) > 2:
                             
                             if path[-1] == path[-3] and try_path[0] == path[-2]:
-                                # print("old_resultInterim", old_resultInterim)
                                 try_path = nx.shortest_path(self.graph,nodeName,old_resultInterim[2])
                                 try_path.pop(0)
                                 result_interim = old_resultInterim
-                                # print("")
-                                # print("LOOP VERHINDERT")
-                                # print("Neuer Trypath: ", try_path)
-
 
                         break
             
             HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
 
         except Exception as e :
-            print("Fehler " + str(e))
-            traceback.print_exc()
+            # print("Fehler " + str(e))
+            # traceback.print_exc()
+            HelperClass.HelperClass.printInColor("No Path found!", 'red')
 
             return []
             
