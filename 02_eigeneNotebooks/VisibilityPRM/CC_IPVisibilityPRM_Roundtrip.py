@@ -12,9 +12,6 @@ from scipy.spatial import cKDTree
 from HelperPackage.IPPerfMonitor import IPPerfMonitor
 from scipy.spatial.distance import euclidean
 from HelperPackage import HelperClass
-import traceback
-
-
 
 class VisibilityStatsHandler():
     
@@ -96,28 +93,35 @@ class VisPRM(PRMBase):
 
     @IPPerfMonitor
     def _checkConnectableInterims(self, checkedStartList,checkedInterimGoalList):
+        
+        # Add the start node to the list of checked interim goals
         checkedInterimGoalList.append(checkedStartList[0])
 
-        
+        # Iterate over all interim goals in the list
         for x in range(len(checkedInterimGoalList)):
             for y in range(len(checkedInterimGoalList)):
                 
+                # Check if there is a direct edge between the two interim goals
                 if  self.graph.has_edge(self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[y]),self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[x])):
                     break
-
+                
+                # Check the visibility between the two interim goals
                 if self._isVisible(checkedInterimGoalList[x],checkedInterimGoalList[y])  == True and checkedInterimGoalList[x] != checkedInterimGoalList[y]:
+                    
+                    # Add an edge in the graph if the interim goals are visible and different
                     self.graph.add_edge(self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[x]), self._getNodeNamebasedOnCoordinates(checkedInterimGoalList[y]))
-            y = y + 1
 
+        checkedInterimGoalList.remove(checkedStartList[0])
 
     @IPPerfMonitor
     def _learnRoadmap(self, ntry):
-        zt = 0
+
         nodeNumber = 0
         currTry = 0
 
         is_connected = False
         
+        # Iterate while not all components of graph are connected
         while not is_connected:
             is_connected = nx.is_connected(self.graph)
             
@@ -150,7 +154,7 @@ class VisPRM(PRMBase):
                         if found == True: break;
                 # break, if connection was found. Reason: computed connected components (comp) are not correct any more, 
                 # they've changed because of merging
-                if merged == True: # how  does it change the behaviour? What has to be done to keep the original behaviour?
+                if merged == True:
                     break;                    
 
             if (merged==False) and (g_vis == None):
@@ -188,27 +192,30 @@ class VisPRM(PRMBase):
         # Add Goallist to InterimGoalList
         checkedInterimGoalList.append(checkedGoalList[0])
         
-        # Start einzeln hinzufügen
+        # Add start node, assign node type "Guard" to start to enable direct connectability
         self.graph.add_node("start", pos=checkedStartList[0], color='lawngreen',nodeType = 'Guard')
         self.statsHandler.addNodeAtPos("start", checkedStartList[0])
 
+        # Add interim goals in graph
         for interimGoal in range(len(checkedInterimGoalList)):
             nameOfNode = "interim" + str(interimGoal)
+
+            # Assign node type "Guard" to interim goals to enable direct connectability
             self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal], color='Dodgerblue',nodeType = 'Guard')
             self.statsHandler.addNodeAtPos(nameOfNode, checkedInterimGoalList[interimGoal])
 
+        # Connect interims which see each other
         self._checkConnectableInterims(checkedStartList,checkedInterimGoalList)
-        checkedInterimGoalList.remove(checkedStartList[0])
+        
 
         # 2. learn Roadmap
-
         self._learnRoadmap(config["ntry"])
 
+        # 3. Find solution path
         try:
             # Calculate shortest distance to nearest interim from start 
             result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
 
-            
             # Plan path from start to nearest interim
             try_path = nx.shortest_path(self.graph, "start", result_interim[2])
 
@@ -224,11 +231,9 @@ class VisPRM(PRMBase):
                     
                     # Add step to the final path
                     path.append(step)
-                    # HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
                     
                     # Find nearest interim goal from the current step in Try-path
                     new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-       
                     
                     # Check if the distance to the new interim is zero (Interim is reached)
                     if new_result_interim[1] == 0.0:
@@ -242,7 +247,6 @@ class VisPRM(PRMBase):
                         
                         # Remove the current interim goal from the list
                         else:
-                        
                             checkedInterimGoalList.remove(new_result_interim[0])
 
                         # Calculate the shortest distance to the new interim goal
@@ -258,26 +262,26 @@ class VisPRM(PRMBase):
                         try_path.pop(0)
 
                         break
-
+                    
+                    # Check if interim goal has changed
                     if new_result_interim != result_interim:
                         
-                       
+                        # Save old interim for case of looping
                         old_resultInterim = result_interim
+
+                        # Overwrite interim goal
                         result_interim = new_result_interim
                         
-                        
-                        
                         # Get the node name of current step based on coordinates
-                        
                         nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
                         
+                        # Create new try path
                         try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
 
                         # Remove first step of Try-Path because it is already reached
                         try_path.pop(0)
 
-                        # Avoid looping
-                        
+                        # Avoid looping by detecting looping pattern
                         if len(path) > 2:
                             
                             if path[-1] == path[-3] and try_path[0] == path[-2]:

@@ -34,8 +34,7 @@ def basicPRMVisualize(planner, solution, ax = None, nodeSize = 300):
                             )
 
     collChecker.drawObstacles(ax)
-    
-    
+     
     # draw nodes based on solution path
     Gsp = nx.subgraph(graph,solution)
     nx.draw_networkx_nodes(Gsp,pos,
@@ -51,13 +50,6 @@ def basicPRMVisualize(planner, solution, ax = None, nodeSize = 300):
                                    node_size=300,
                                    node_color='lawngreen',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={"start": "S"},  ax = ax)
-
-
-    #if "interim" in graph.nodes():
-    #    nx.draw_networkx_nodes(graph,pos,nodelist=["interim"],
-    #                               node_size=300,
-    #                               node_color='#DD00DA',  ax = ax)
-    #    nx.draw_networkx_labels(graph,pos,labels={"interim": "I"},  ax = ax)
         
                         
     # Count the amount of interims in Node of the main graph
@@ -73,11 +65,4 @@ def basicPRMVisualize(planner, solution, ax = None, nodeSize = 300):
                                     node_color='Coral',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={name: "I"},  ax = ax)
         i += 1
-
-
-    # if "goal" in graph.nodes():
-    #     nx.draw_networkx_nodes(graph,pos,nodelist=["goal"],
-    #                                node_size=300,
-    #                                node_color='Dodgerblue',  ax = ax)
-    #     nx.draw_networkx_labels(graph,pos,labels={"goal": "G"},  ax = ax)
 

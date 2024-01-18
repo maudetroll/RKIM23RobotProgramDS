@@ -189,6 +189,7 @@ class BasicPRM(IPPRMBase.PRMBase):
                     self.graph.add_edge(nameOfNode, node[0])
                     break
 
+        # find nearest, collision-free connection between node on graph and interim goal
         result = self._nearestNeighbours(checkedGoalList[0], config["radius"])
         for node in result:
             if not self._collisionChecker.lineInCollision(checkedGoalList[0],node[1]['pos']):
@@ -212,8 +213,7 @@ class BasicPRM(IPPRMBase.PRMBase):
                 
                 # Iterate through steps in the current try_path
                 for step in try_path:
-
-                    
+  
                     # Add step to the final path
                     path.append(step)
                     # HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
@@ -249,7 +249,7 @@ class BasicPRM(IPPRMBase.PRMBase):
                         try_path.pop(0)
 
                         break
-
+                    # Check if the nearest interim goal has changed
                     if new_result_interim != result_interim:
                         
                         # Save previous interim for case of looping
@@ -258,9 +258,9 @@ class BasicPRM(IPPRMBase.PRMBase):
                         result_interim = new_result_interim
                         
                         # Get the node name of current step based on coordinates
-                        
                         nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes[step]['pos'])
                         
+                        # Plan new try path
                         try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
 
                         # Remove first step of Try-Path because it is already reached
