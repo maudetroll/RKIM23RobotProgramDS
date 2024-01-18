@@ -1,11 +1,12 @@
+![](banner_roboterprog.png)
+![banner_roboterprog](https://github.com/maudetroll/RKIM23RobotProgramDS/assets/55143852/bd8dc7ed-b810-44b9-9a9e-70b859f56560)
+
 ### RKIM23RobotProgramDS ###
 ## Wie führe ich das ganze aus?
 
 02_eigeneNotebooks -> Roundtrip-Automated_PlanerTest ausführen
 
 ![Bildschirmfoto vom 2024-01-18 10-13-17](https://github.com/maudetroll/RKIM23RobotProgramDS/assets/55143852/12c3d39b-07a1-4a34-adcc-2f56813cec21)
-
-
 
 ## Performance Auswertung
 
