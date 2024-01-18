@@ -112,20 +112,19 @@ class LazyPRM(PRMBase):
     
     @IPPerfMonitor
     def _checkForCollisionAndUpdate(self,step, path):
-        #path = long_path[:2]
 
         # first check all nodes
         if self._collisionChecker.pointInCollision(step):
-
+            # Remove node if collision is detected
             self.graph.remove_node(self._getNodeNamebasedOnCoordinates(step))
             return True
-        
-        # check all path segments
 
         step = self._getNodeNamebasedOnCoordinates(step)
         path = self._getNodeNamebasedOnCoordinates(path) 
-    
+
+        # Check all edges
         if self._collisionChecker.lineInCollision(self.graph.nodes()[step]['pos'], self.graph.nodes()[path]['pos']):
+            # Remove edge if collision is detected
             self.graph.remove_edge(step,path)
             self.collidingEdges.append((step,path))
 
@@ -137,29 +136,41 @@ class LazyPRM(PRMBase):
         return False
     
     def _findDuplicate(self, subPath):
-
         
+        # Initialize an empty list to store duplicate elements
         duplicate = []
         
+        # Iterate over each element in the subPath list
         for i in range(len(subPath)):
+            # Nested loop to compare each element with the remaining elements
             for j in range(i + 1, len(subPath)):
                 
+                # Check if the elements are equal and the element is not already in the 'duplicate' list
                 if subPath[i] == subPath[j] and subPath[i] not in duplicate:
+                    
+                    # Add the duplicate element to the 'duplicate' list
                     duplicate.append(subPath[i])
         
+        # If no duplicates were found, return an empty list
         if duplicate == []:
             return []
         
+        # Return the first duplicate found (only the first one is returned, even if there are more)
         return duplicate[0]
 
     def _removeDuplicate(self, subPath, duplicate):
         
-        # find index of duplicate
+        # Find the indices of all occurrences of the duplicate element in the subPath list
         indexList = [index for index, element in enumerate(subPath) if element == duplicate]
+        
+        # Get the start and end indices of the duplicate occurrences
         start = indexList[0]
         end = indexList[-1]
+
+        # Create a modified subPath by concatenating the portions before and after the duplicate occurrences
         modSubPath = subPath[:start + 1] + subPath[end + 1:]
         
+        # Return the modified subPath without the duplicate occurrences
         return modSubPath
         
     @IPPerfMonitor   
@@ -191,19 +202,15 @@ class LazyPRM(PRMBase):
         # Add Goallist to InterimGoalList
         checkedInterimGoalList.append(checkedGoalList[0])
         
-        # 2. add start and goal to graph
+        # 2. add start to graph
         self.graph.add_node("start", pos=checkedStartList[0])
-        # self.graph.add_node("interim", pos=checkedInterimGoalList[0])
 
-        # Interim Liste erweitern
+        # Add Interims to graph
         for interimGoal in range(len(checkedInterimGoalList)):
             
             nameOfNode = "interim" + str(interimGoal)
 
             self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal])
-            
-
-        self.graph.add_node("goal", pos=checkedGoalList[0])
         
         # 3. build initial roadmap
         self._buildRoadmap(config["initialRoadmapSize"], config["kNearest"])
@@ -223,22 +230,26 @@ class LazyPRM(PRMBase):
             
             # Plan path from start to nearest interim
             try_path = nx.shortest_path(self.graph, "start", result_interim[2])
+
             path.append(try_path[0])
             
-            # Löschen des ersten Elements -> Start
+            # Remove first element of try path
             try_path.remove('start')
 
             coordinatesLastPathEle.append(checkedStartList[0])
-            oldInterim = [[],[],'start']
+            
+            # Initialize previous interim
+            previousInterim = [[],[],'start']
+
             # Loop to iteratively plan a path through interim goals
             while not breakcondition and maxTry < maxIterations:
-     
+
                 # Iterate through steps in the current try_path
                 for step in try_path:
-
+                   
                     # Check for collision between current step and last path element
                     if self._checkForCollisionAndUpdate(self.graph.nodes[step]['pos'], coordinatesLastPathEle[-1]):
-                        
+
                         # Add nodes
                         self._buildRoadmap(config["updateRoadmapSize"], config["kNearest"])
                         
@@ -247,6 +258,7 @@ class LazyPRM(PRMBase):
                         # Plan a new path from the current position to the new interim goal
                         try_path = nx.shortest_path(self.graph,path[-1],result_interim[2])
                         
+                        # Remove first path element to avoid duplicates in path
                         try_path.pop(0)
 
                         break
@@ -256,28 +268,33 @@ class LazyPRM(PRMBase):
 
                         # HelperClass.HelperClass.printInColor("Aktueller Pfad: " + str(path), 'Dodgerblue')
                         
+                        # Save coordinates of last path element
                         coordinatesLastPathEle.append(self.graph.nodes()[step]['pos'])
+                        
+                        # Get actual nearest interim
                         new_result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
 
-
+                        # Check if interim is equal
                         if new_result_interim == result_interim:
-
+                            
+                            # Continue with next step of try path
                             continue                                    
                     
                         # Check if the distance to the new interim is zero (Interim is reached)
                         if new_result_interim[1] == 0.0:
 
-                                                       
-                            subPath = path[path.index(oldInterim[2]):]
-
+                            # Optimize last path segment                          
+                            subPath = path[path.index(previousInterim[2]):]
 
                             while(self._findDuplicate(subPath) != []):
                                 duplicate = self._findDuplicate(subPath)
                                 modSubPath = self._removeDuplicate(subPath, duplicate)
                                 subPath = modSubPath
+                            if subPath != path[path.index(previousInterim[2]):]:
 
-                            if subPath != path[path.index(oldInterim[2]):]:
-                                path = path[:path.index(oldInterim[2])] + subPath
+                                # overwrite actual path with optimized path segment
+                                path = path[:path.index(previousInterim[2])] + subPath
+
 
                             # Check if there is only one interim goal remaining, this means all interims are reached
                             if (len(checkedInterimGoalList) == 1 ):
@@ -285,17 +302,17 @@ class LazyPRM(PRMBase):
                                 # End the loop
                                 breakcondition = True
                                 break
-                                
-                            # Remove the current interim goal from the list
+                            
+                            # Save previous interim for case of optimization  
+                            previousInterim = new_result_interim
 
-                            oldInterim = new_result_interim
+                            # Remove the current interim goal from the list
                             checkedInterimGoalList.remove(new_result_interim[0])                          
                             
                             # Calculate the shortest distance to the new interim goal
                             result_interim = self._nearestInterim(self.graph.nodes[step]['pos'], checkedInterimGoalList)
-
+                            
                             nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[step]['pos'])
-                            #nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[path[-1]]['pos'])
 
                             # Plan a new path from the current position to the new interim goal
                             try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
@@ -303,18 +320,52 @@ class LazyPRM(PRMBase):
                             try_path.pop(0)
 
                             break
+                        
+                        # Check if nearest interim has changed
+                        if new_result_interim != result_interim:
+                            
+                            # Save old interim for case of looping
+                            old_resultInterim = result_interim
+
+                            # Change interim goal to new closest interim goal
+                            result_interim = new_result_interim
+
+                            # Plan a new path from the current position to the new interim goal
+                            nodeName = self._getNodeNamebasedOnCoordinates(self.graph.nodes()[step]['pos'])
+                            try_path = nx.shortest_path(self.graph,nodeName,result_interim[2])
+                            try_path.pop(0)
+
+                            # Avoid looping by detecting looping pattern
+                            
+                            # Check if the length of the 'path' list is greater than 2
+                            if len(path) > 2:
+                                
+                                # Check if the last element of 'path' is equal to third last element of 'path'
+                                # and the first element of 'try_path' is equal to the second last element of 'path'
+                                if path[-1] == path[-3] and try_path[0] == path[-2]:
+                                    
+                                    # Break looping by planning path to old_resultInterim 
+                                    try_path = nx.shortest_path(self.graph,nodeName,old_resultInterim[2])
+                                    try_path.pop(0)
+                                    
+                                    # Update the actual interim goal
+                                    result_interim = old_resultInterim
+
+                            break
+
+                            
             
             if maxTry == maxIterations:
+                # Empty the actual path if maxIterations is reached
                 path = []
-            HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
+                HelperClass.HelperClass.printInColor("No Path found", 'red')
+            else:  
+                HelperClass.HelperClass.printInColor("Solution =  " + str(path), 'lawngreen')
 
             return path
         
         except Exception as e:
             HelperClass.HelperClass.printInColor("No Path found", 'red')
-            # print("MaxTry: "+ str(maxTry) + " Fehler: " + str(e))
-            import traceback
-            # traceback.print_exc()
 
         return []
 

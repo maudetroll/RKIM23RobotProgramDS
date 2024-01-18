@@ -273,11 +273,22 @@ class VisPRM(PRMBase):
                         # Remove first step of Try-Path because it is already reached
                         try_path.pop(0)
 
+
                         # Avoid looping by detecting looping pattern
-                        if try_path[0] == path[-2]:
-                            try_path = nx.shortest_path(self.graph,nodeName,old_resultInterim[2])
-                            try_path.pop(0)
-                            result_interim = old_resultInterim
+                        
+                        # Check if the length of the 'path' list is greater than 2
+                        if len(path) > 2:
+                            
+                            # Check if the last element of 'path' is equal to third last element of 'path'
+                            # and the first element of 'try_path' is equal to the second last element of 'path'
+                            if path[-1] == path[-3] and try_path[0] == path[-2]:
+                               
+                                # Break looping by planning path to old_resultInterim 
+                                try_path = nx.shortest_path(self.graph,nodeName,old_resultInterim[2])
+                                try_path.pop(0)
+                                
+                                # Update the actual interim goal
+                                result_interim = old_resultInterim
 
                         break
             
