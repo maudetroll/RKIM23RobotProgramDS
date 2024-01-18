@@ -1,5 +1,15 @@
 ### RKIM23RobotProgramDS ###
+## Wie führe ich das ganze aus?
 
+02_eigeneNotebooks -> Roundtrip-Automated_PlanerTest aus führen
+
+![Bildschirmfoto vom 2024-01-18 10-13-17](https://github.com/maudetroll/RKIM23RobotProgramDS/assets/55143852/12c3d39b-07a1-4a34-adcc-2f56813cec21)
+
+
+
+## Performance Auswertung
+
+Siehe Auswertung_alle_3PRMs.xlsx
 
 ## P5 – Roundtrip-Path ##
 I. Implementieren Sie einen Roundtrip-Path Planer.
