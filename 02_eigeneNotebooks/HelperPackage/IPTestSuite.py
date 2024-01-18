@@ -117,4 +117,4 @@ for i in range(circle_anz):
     draw["sol_1"+str(i)] = calc["dif"+str(i)]
 
 description = "Find the path"
-benchList.append(Benchmark("circle od death", CollisionChecker(draw), [mid],[[10,4.5],[10,7.5],[20,3]],[[1,1]], description, 2))
+benchList.append(Benchmark("Circle of Death", CollisionChecker(draw), [mid],[[10,4.5],[10,7.5],[20,3]],[[1,1]], description, 2))
