@@ -20,16 +20,16 @@ I. Implementieren Sie einen Roundtrip-Path Planer.
 
 a) Gegeben sind
 
-a. Startposition
-b. Mehrere Endpositionen
+a. Startposition <br>
+b. Mehrere Endpositionen <br>
 c. Das Interface des Roundtrip-Path-Planners soll sich nicht von den anderen
-Bahnplanern unterscheiden.
+Bahnplanern unterscheiden. <br>
 d. der zu verwendete Bahnplanungsalgorithmus soll wählbar sein und
-geeignet übergeben werden können.
+geeignet übergeben werden können. <br>
 e. Ausgabe: Ein kollisionsfreier Pfad, der von der gegebenen Startposition alle
 Endpositionen genau einmal erreicht. Kodieren den Pfad geeignet, so dass
 sich erkennen lässt, was Start-Punkt, kollisionsfreier Zwischenpfad und
-Zielpunkte sind.
+Zielpunkte sind. <br>
 
 b) Evaluieren Sie mit BasicPRM, LazyPRM, VisibilityPRM anhand von mindestens 5
 Benchmarkumgebungen. Stellen Sie die Ergebnisse grafisch da und diskutieren Sie
