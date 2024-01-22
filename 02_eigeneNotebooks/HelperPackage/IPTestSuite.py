@@ -74,29 +74,6 @@ description = "Find the path!"
 benchList.append(Benchmark("B_rush",CollisionChecker(simpleField),[[1,17.7]],[[10,10],[15,2],[20,18]],[[17.25,10]],description,2))
 
 
-
-
-### FunFunFun 
-
-#not_special = dict()
-#not_special["base"] = Point(11,20.55).buffer(2.4)
-#not_special["arms"] = LineString([(11.65,17.65),(11.65,10.5)]).buffer(0.5)
-#not_special["arms2"] = LineString([(11.65,8.5),(11.65,0)]).buffer(0.5)
-#not_special["obs1"] = LineString([(12.7, 8), (18, 8), (18, 12), (14,12)]).buffer(0.5)
-#not_special["obs2"] = LineString([(15, 14), (20, 14), (20, 10),(23,10)]).buffer(0.5)
-#not_special["obs3"] = LineString([(0, 18), (5, 18), (5, 20)]).buffer(0.5)
-#not_special["obs4"] = LineString([(15, 5), (20, 5), (20, 8)]).buffer(0.5)
-#for i in range(15):
-#    target1 = (11-1.2*i,18-1.4*i)
-##    not_special["partA"+str(i)] = LineString([(11,18-1*i), target1 ]).buffer(0.1)
-#for i in range(5):
-#    target1 = (20-1.2*i,25-2*i)
-#    not_special["partB"+str(i)] = LineString([(20,22-1*i), target1 ]).buffer(0.1)
-
-#description = "Find the proper path!"
-#benchList.append(Benchmark("FunFunFun",CollisionChecker(not_special),[[1,20]],[[3,8],[2,13],[17,3]],[[20,1]],description,2))
-
-
 ### Circle of Death
 
 calc = dict()
