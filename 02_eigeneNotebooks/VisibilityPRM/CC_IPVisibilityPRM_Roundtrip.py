@@ -38,15 +38,19 @@ class VisPRM(PRMBase):
         return not self._collisionChecker.lineInCollision(pos, guardPos)
 
     def _getNodeNamebasedOnCoordinates(self,coordinates):
+        
         # Initialize node name
         nodeName = ""
         
         # Loop through all nodes and their attributes in the graph
         for node, attributes in self.graph.nodes(data=True):
+            
             # Check if the current node has a "pos" attribute
             if "pos" in attributes:
+                
                 # Check if the coordinates match the "pos" attribute of the current node
                 if coordinates == attributes["pos"]:
+                    
                     # Assign the name of the current node to nodeName and exit the loop
                     nodeName = node
                     break
@@ -137,21 +141,29 @@ class VisPRM(PRMBase):
             for comp in nx.connected_components(self.graph): # Impliciteley represents G_vis
                 found = False
                 merged = False
+                
                 for g in comp: # connected components consists of guards and connection: only test nodes of type 'Guards'
+                    
                     if self.graph.nodes()[g]['nodeType'] == 'Guard':
+                        
                         if self.statsHandler:
                             self.statsHandler.addVisTest(nodeNumber, g)
+                        
                         if self._isVisible(q_pos,self.graph.nodes()[g]['pos']):
                             found = True
+                            
                             if g_vis == None:
                                 g_vis = g
+                            
                             else:
                                 self.graph.add_node(nodeNumber, pos = q_pos, color='lightblue', nodeType = 'Connection')
                                 self.graph.add_edge(nodeNumber, g)
                                 self.graph.add_edge(nodeNumber, g_vis)
                                 merged = True
+                       
                         # break, if node was visible,because visibility from one node of the guard is sufficient...
                         if found == True: break;
+                
                 # break, if connection was found. Reason: computed connected components (comp) are not correct any more, 
                 # they've changed because of merging
                 if merged == True:
@@ -170,7 +182,7 @@ class VisPRM(PRMBase):
             
 
     @IPPerfMonitor
-    def planRoundPath(self, startList, interimGoalList, goalList, config):
+    def planRoundPath(self, startList, interimGoalList, config):
         """
         
         Args:
@@ -187,10 +199,7 @@ class VisPRM(PRMBase):
         self.graph.clear()
         
         # 1. check start and goal whether collision free (s. BaseClass)
-        checkedStartList, checkedInterimGoalList, checkedGoalList = self._checkStartGoal(startList, interimGoalList, goalList)
-        
-        # Add Goallist to InterimGoalList
-        checkedInterimGoalList.append(checkedGoalList[0])
+        checkedStartList, checkedInterimGoalList = self._checkStartGoal(startList, interimGoalList)
         
         # Add start node, assign node type "Guard" to start to enable direct connectability
         self.graph.add_node("start", pos=checkedStartList[0], color='lawngreen',nodeType = 'Guard')

@@ -122,8 +122,10 @@ class VisPRM(PRMBase):
 
         # Iterate as long as current try is less than ntry
         while currTry < ntry:
+            
             # select a random  free position
             q_pos = self._getRandomFreePosition()
+            
             if self.statsHandler:
                 self.statsHandler.addNodeAtPos(nodeNumber, q_pos)
            
@@ -131,15 +133,21 @@ class VisPRM(PRMBase):
         
             # every connected component represents one guard
             merged = False
+            
             for comp in nx.connected_components(self.graph): # Impliciteley represents G_vis
                 found = False
                 merged = False
+                
                 for g in comp: # connected components consists of guards and connection: only test nodes of type 'Guards'
+                    
                     if self.graph.nodes()[g]['nodeType'] == 'Guard':
+                        
                         if self.statsHandler:
                             self.statsHandler.addVisTest(nodeNumber, g)
+                        
                         if self._isVisible(q_pos,self.graph.nodes()[g]['pos']):
                             found = True
+                            
                             if g_vis == None:
                                 g_vis = g
                             else:
@@ -147,8 +155,10 @@ class VisPRM(PRMBase):
                                 self.graph.add_edge(nodeNumber, g)
                                 self.graph.add_edge(nodeNumber, g_vis)
                                 merged = True
+                        
                         # break, if node was visible,because visibility from one node of the guard is sufficient...
                         if found == True: break;
+                
                 # break, if connection was found. Reason: computed connected components (comp) are not correct any more, 
                 # they've changed because of merging
                 if merged == True:
@@ -163,7 +173,7 @@ class VisPRM(PRMBase):
             nodeNumber += 1
 
     @IPPerfMonitor
-    def planRoundPath(self, startList, interimGoalList, goalList, config):
+    def planRoundPath(self, startList, interimGoalList, config):
         """
         
         Args:
@@ -180,10 +190,7 @@ class VisPRM(PRMBase):
         self.graph.clear()
         
         # 1. check start and goal whether collision free (s. BaseClass)
-        checkedStartList, checkedInterimGoalList, checkedGoalList = self._checkStartGoal(startList, interimGoalList, goalList)
-        
-        # Add Goallist to InterimGoalList
-        checkedInterimGoalList.append(checkedGoalList[0])
+        checkedStartList, checkedInterimGoalList = self._checkStartGoal(startList, interimGoalList)
         
         # Add start node, assign node type "Guard" to start to enable direct connectability
         self.graph.add_node("start", pos=checkedStartList[0], color='lawngreen',nodeType = 'Guard')
@@ -205,6 +212,7 @@ class VisPRM(PRMBase):
         
         # 3. Find solution path
         try:
+            
             # Calculate shortest distance to nearest interim from start 
             result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
             

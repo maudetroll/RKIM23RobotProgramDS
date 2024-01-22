@@ -133,7 +133,7 @@ class BasicPRM(IPPRMBase.PRMBase):
             nodeID += 1
     
     @IPPerfMonitor
-    def planRoundPath(self, startList,interimGoalList, goalList, config):
+    def planRoundPath(self, startList,interimGoalList, config):
         """
         
         Args:
@@ -157,11 +157,7 @@ class BasicPRM(IPPRMBase.PRMBase):
         self.graph.clear()
         
         # 1. check start and goal whether collision free (s. BaseClass)
-        checkedStartList, checkedInterimGoalList, checkedGoalList = self._checkStartGoal(startList,interimGoalList, goalList)
-        
-        # Add Goallist to InterimGoalList
-        checkedInterimGoalList.append(checkedGoalList[0])
-
+        checkedStartList, checkedInterimGoalList = self._checkStartGoal(startList, interimGoalList)
 
         # 2. learn Roadmap
         self._learnRoadmapNearestNeighbour(config["radius"],config["numNodes"])
@@ -188,16 +184,9 @@ class BasicPRM(IPPRMBase.PRMBase):
                     self.graph.add_node(nameOfNode, pos=checkedInterimGoalList[interimGoal], color='Coral')
                     self.graph.add_edge(nameOfNode, node[0])
                     break
-
-        # find nearest, collision-free connection between node on graph and interim goal
-        result = self._nearestNeighbours(checkedGoalList[0], config["radius"])
-        for node in result:
-            if not self._collisionChecker.lineInCollision(checkedGoalList[0],node[1]['pos']):
-                 self.graph.add_node("goal", pos=checkedGoalList[0], color='Coral')
-                 self.graph.add_edge("goal", node[0])
-                 break
         
         try:
+            
             # Calculate shortest distance to nearest interim from start 
             result_interim = self._nearestInterim(checkedStartList[0], checkedInterimGoalList)
             

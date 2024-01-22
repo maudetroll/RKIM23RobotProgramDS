@@ -14,19 +14,13 @@ import math
 import numpy as np
 import random
 
-
 benchList = list()
-
-
 
 # -----------------------------------------
 trapField = dict()
 trapField["obs1"] =   LineString([(6, 18), (6, 8), (16, 8), (16,18)]).buffer(1.0)
 description = "Following the direct connection from goal to start would lead the algorithm into a trap."
-#benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[10,20]], [[10,15], [20,10]], [[10,1]], description, 2))
-benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[9,15]], [[3,9],[19,8],[3,3],[20,15]],[[10,1]], description, 2))
-
-# , [[10,1]
+benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[9,15]], [[3,9],[19,8],[3,3],[20,15],[10,1]], description, 2))
 
 
 # -----------------------------------------
@@ -34,7 +28,7 @@ bottleNeckField = dict()
 bottleNeckField["obs1"] = LineString([(0, 13), (11, 13)]).buffer(.5)
 bottleNeckField["obs2"] = LineString([(13, 13), (23,13)]).buffer(.5)
 description = "Planer has to find a narrow passage."
-benchList.append(Benchmark("Bottleneck", CollisionChecker(bottleNeckField), [[4,15]],[[18,3],[18,16],[4,4]],[[18,1]], description, 2))
+benchList.append(Benchmark("Bottleneck", CollisionChecker(bottleNeckField), [[4,15]],[[18,3],[18,16],[4,4],[18,1]], description, 2))
 
 
 
@@ -43,10 +37,9 @@ fatBottleNeckField = dict()
 fatBottleNeckField["obs1"] = Polygon([(0, 8), (11, 8),(11, 15), (0, 15)]).buffer(.5)
 fatBottleNeckField["obs2"] = Polygon([(13, 8), (24, 8),(24, 15), (13, 15)]).buffer(.5)
 description = "Planer has to find a narrow passage with a significant extend."
-benchList.append(Benchmark("Fat bottleneck", CollisionChecker(fatBottleNeckField), [[4,21]], [[18,4],[4,4],[18,16]], [[18,1]], description, 2))
+benchList.append(Benchmark("Fat bottleneck", CollisionChecker(fatBottleNeckField), [[4,21]], [[18,4],[4,4],[18,16],[18,1]], description, 2))
 
-### BE RUSH
-
+# BE RUSH
 
 simpleField = dict()
 simpleField["obs1"] = Polygon([(0,5),(5,5),(5,4),(0,4)])
@@ -71,7 +64,7 @@ simpleField["obs19"] = Polygon([(18,7),(22,7),(22,10),(18,10)])
 simpleField["obs20"] = Polygon([(0,0.5),(7,0.5),(7,2),(0,2)])
 
 description = "Find the path!"
-benchList.append(Benchmark("B_rush",CollisionChecker(simpleField),[[1,17.7]],[[10,10],[15,2],[20,18]],[[17.25,10]],description,2))
+benchList.append(Benchmark("B_rush",CollisionChecker(simpleField),[[1,17.7]],[[10,10],[15,2],[20,18],[17.25,10]], description,2))
 
 
 ### Circle of Death
@@ -94,4 +87,4 @@ for i in range(circle_anz):
     draw["sol_1"+str(i)] = calc["dif"+str(i)]
 
 description = "Find the path"
-benchList.append(Benchmark("Circle of Death", CollisionChecker(draw), [mid],[[10,4.5],[10,7.5],[20,3]],[[1,1]], description, 2))
+benchList.append(Benchmark("Circle of Death", CollisionChecker(draw), [mid],[[10,4.5],[10,7.5],[20,3],[1,1]], description, 2))

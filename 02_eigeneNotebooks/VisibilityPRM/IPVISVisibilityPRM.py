@@ -9,6 +9,7 @@ License is based on Creative Commons: Attribution-NonCommercial 4.0 Internationa
 import networkx as nx
 
 def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
+    
     # get a list of positions of all nodes by returning the content of the attribute 'pos'
     graph = planner.graph
     statsHandler = planner.statsHandler
@@ -28,13 +29,13 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
                             )
    
     collChecker.drawObstacles(ax)
+    
     # get nodes based on solution path
     Gsp = nx.subgraph(graph,solution)
 
     # draw edges based on solution path
     nx.draw_networkx_edges(Gsp,pos,alpha=0.8,edge_color='g',width=10, label="Solution Path",ax=ax)
         
-    # draw start and goal
     # draw start and goal
     if "start" in graph.nodes(): 
         nx.draw_networkx_nodes(graph,pos,nodelist=["start"],
@@ -56,13 +57,3 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
                                     node_color='Dodgerblue',  ax = ax)
         nx.draw_networkx_labels(graph,pos,labels={name: "I"},  ax = ax)
         i += 1
-
-'''
-
-    if "goal" in graph.nodes():
-        nx.draw_networkx_nodes(graph,pos,nodelist=["goal"],
-                                   node_size=nodeSize,
-                                   node_color='#DD0000',  ax = ax)
-        nx.draw_networkx_labels(graph,pos,labels={"goal": "G"},  ax = ax)
-
-'''

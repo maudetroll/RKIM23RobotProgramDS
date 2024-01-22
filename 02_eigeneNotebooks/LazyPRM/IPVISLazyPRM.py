@@ -10,6 +10,7 @@ import networkx as nx
 from HelperPackage import HelperClass
 
 def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
+    
     graph = planner.graph.copy()
     collChecker = planner._collisionChecker
     collEdges = planner.collidingEdges
@@ -32,7 +33,7 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
     
     # draw all connected components, emphasize the largest one
     Gcc=(graph.subgraph(c) for c in nx.connected_components(graph))
-    G0=next(Gcc) # [0] = largest connected component
+    G0=next(Gcc) 
     
     # how largest connected component
     nx.draw_networkx_edges(G0,pos,
@@ -51,6 +52,7 @@ def lazyPRMVisualize(planner, solution = [] , ax=None, nodeSize = 300):
 
     # show other connected components
     for Gi in Gcc:
+        
         if len(Gi) >1:
             nx.draw_networkx_edges(Gi,pos,edge_color='b',alpha=0.1, width=1.0)
 

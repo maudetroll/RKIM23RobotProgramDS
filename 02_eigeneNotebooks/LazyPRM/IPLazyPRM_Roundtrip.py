@@ -8,7 +8,6 @@ License is based on Creative Commons: Attribution-NonCommercial 4.0 Internationa
 from HelperPackage.IPPRMBase import PRMBase
 from scipy.spatial import cKDTree
 import networkx as nx
-import random
 from scipy.spatial.distance import euclidean
 from HelperPackage import HelperClass
 
@@ -32,10 +31,13 @@ class LazyPRM(PRMBase):
         
         # Loop through all nodes and their attributes in the graph
         for node, attributes in self.graph.nodes(data=True):
+            
             # Check if the current node has a "pos" attribute
             if "pos" in attributes:
+                
                 # Check if the coordinates match the "pos" attribute of the current node
                 if coordinates == attributes["pos"]:
+                    
                     # Assign the name of the current node to nodeName and exit the loop
                     nodeName = node
                     break
@@ -85,6 +87,7 @@ class LazyPRM(PRMBase):
         
         # generate #numNodes nodes
         addedNodes = []
+        
         for i in range(numNodes):
             pos = self._getRandomPosition()
             self.graph.add_node(self.lastGeneratedNodeNumber, pos=pos)
@@ -115,6 +118,7 @@ class LazyPRM(PRMBase):
 
         # first check all nodes
         if self._collisionChecker.pointInCollision(step):
+            
             # Remove node if collision is detected
             self.graph.remove_node(self._getNodeNamebasedOnCoordinates(step))
             return True
@@ -124,6 +128,7 @@ class LazyPRM(PRMBase):
 
         # Check all edges
         if self._collisionChecker.lineInCollision(self.graph.nodes()[step]['pos'], self.graph.nodes()[path]['pos']):
+            
             # Remove edge if collision is detected
             self.graph.remove_edge(step,path)
             self.collidingEdges.append((step,path))
@@ -174,9 +179,9 @@ class LazyPRM(PRMBase):
         return modSubPath
         
     @IPPerfMonitor   
-    def planRoundPath(self, startList, interimGoalList, goalList, config):
-        """
+    def planRoundPath(self, startList, interimGoalList, config):
         
+        """
         Args:
             startList (array): start position in planning space
             goalList (array) : goal position in planning space
@@ -188,19 +193,14 @@ class LazyPRM(PRMBase):
             config["updateRoadmapSize"]  = 20 # number of nodes to add if there is no connection from start to end
             config["kNearest"] = 5 # number of nodes to connect to during setup
         """
-        
-
-        
+          
         # 0. reset
         self.graph.clear()
         self.lastGeneratedNodeNumber = 0
         self.collidingEdges = []
         
         # 1. check start and goal whether collision free (s. BaseClass)
-        checkedStartList, checkedInterimGoalList, checkedGoalList = self._checkStartGoal(startList, interimGoalList, goalList)
-        
-        # Add Goallist to InterimGoalList
-        checkedInterimGoalList.append(checkedGoalList[0])
+        checkedStartList, checkedInterimGoalList = self._checkStartGoal(startList, interimGoalList)
         
         # 2. add start to graph
         self.graph.add_node("start", pos=checkedStartList[0])
@@ -353,8 +353,6 @@ class LazyPRM(PRMBase):
 
                             break
 
-                            
-            
             if maxTry == maxIterations:
                 # Empty the actual path if maxIterations is reached
                 path = []
