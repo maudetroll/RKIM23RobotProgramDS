@@ -18,7 +18,7 @@ Aufgabenstellung:
 
 I. Implementieren Sie einen Roundtrip-Path Planer.
 
-a) Gegeben sind
+a) Gegeben sind <br>
 a. Startposition <br>
 b. Mehrere Endpositionen <br>
 c. Das Interface des Roundtrip-Path-Planners soll sich nicht von den anderen
