@@ -4,7 +4,7 @@
 ### RKIM23RobotProgramDS ###
 ## Wie werden die Algorithmen ausgeführt?
 
-02_eigeneNotebooks -> Roundtrip-Automated_PlanerTest ausführen
+Im Pfad "02_eigeneNotebooks" die Datei "Roundtrip-Automated_PlanerTest" und ausführen. Standardmäßig werden alle 3 PRM Verfahren mit allen 5 Benchmark-Umgebungen ausgeführt. Für eine übersichtlichere Analyse können einzelne PRM Verfahren auskommentiert werden, sowie die Anzahl der auszuführenden Benchmarks angepasst werden.
 
 ![Bildschirmfoto vom 2024-01-18 10-13-17](https://github.com/maudetroll/RKIM23RobotProgramDS/assets/55143852/12c3d39b-07a1-4a34-adcc-2f56813cec21)
 
@@ -13,6 +13,9 @@
 Die Performance Auswertung befindet sich in der Excel Tabelle "Auswertung_alle_3PRMs.xlsx". Hier sind alle Testdaten, sowie zugehörige Diagramme hinterlegt.
 
 ## P5 – Roundtrip-Path ##
+
+Aufgabenstellung:
+
 I. Implementieren Sie einen Roundtrip-Path Planer.
 
 a) Gegeben sind
