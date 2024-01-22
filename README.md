@@ -19,14 +19,13 @@ Aufgabenstellung:
 I. Implementieren Sie einen Roundtrip-Path Planer.
 
 a) Gegeben sind
-
-+ a. Startposition <br>
-+ b.    Mehrere Endpositionen <br>
-c.    Das Interface des Roundtrip-Path-Planners soll sich nicht von den anderen
+a. Startposition <br>
+b. Mehrere Endpositionen <br>
+c. Das Interface des Roundtrip-Path-Planners soll sich nicht von den anderen
 Bahnplanern unterscheiden. <br>
-d.    Der zu verwendete Bahnplanungsalgorithmus soll wählbar sein und
+d. Der zu verwendete Bahnplanungsalgorithmus soll wählbar sein und
 geeignet übergeben werden können. <br>
-e.    Ausgabe: Ein kollisionsfreier Pfad, der von der gegebenen Startposition alle
+e. Ausgabe: Ein kollisionsfreier Pfad, der von der gegebenen Startposition alle
 Endpositionen genau einmal erreicht. Kodieren den Pfad geeignet, so dass
 sich erkennen lässt, was Start-Punkt, kollisionsfreier Zwischenpfad und
 Zielpunkte sind. <br>
