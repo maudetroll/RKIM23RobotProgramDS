@@ -2,7 +2,7 @@
 ![banner_roboterprog](https://github.com/maudetroll/RKIM23RobotProgramDS/assets/55143852/bd8dc7ed-b810-44b9-9a9e-70b859f56560)
 
 ### RKIM23RobotProgramDS ###
-## Wie führe ich das ganze aus?
+## Wie werden die Algorithmen ausgeführt?
 
 02_eigeneNotebooks -> Roundtrip-Automated_PlanerTest ausführen
 
@@ -10,7 +10,7 @@
 
 ## Performance Auswertung
 
-Siehe Auswertung_alle_3PRMs.xlsx
+Die Performance Auswertung befindet sich in der Excel Tabelle "Auswertung_alle_3PRMs.xlsx". Hier sind alle Testdaten, sowie zugehörige Diagramme hinterlegt.
 
 ## P5 – Roundtrip-Path ##
 I. Implementieren Sie einen Roundtrip-Path Planer.
