@@ -9,10 +9,18 @@ Im Pfad "02_eigeneNotebooks" die Datei "Roundtrip-Automated_PlanerTest" und ausf
 
 <img src="./03_Auswertung/Bilder/ProjektDateistruktur.png" alt="Projekt DateiStruktur" width="300"/>
 
+## Roundtrip-Automated_PlanerTest
+In dieser Datei werden die Benchmarks ausgeführt und visualisiert (analog der Vorlage AutomatedPlanerTest).
+
+## Aufgabe2_Optimierung_und_Glaettung
+In dieser Datei befindet sich die Lösung zu Aufgabe 2.
+
+## Auswertung_der_Algorithmen
+In dieser Datei befindet sich die Beschreibung der Pfadplanung, sowie die schriftliche Auswertung der Ergebnisse.
 
 ## Performance Auswertung
 
-Die Performance Auswertung befindet sich in der Excel Tabelle "Auswertung_Daten_Roundtrip.xlsx". Hier sind alle Testdaten, sowie zugehörige Diagramme hinterlegt.
+Die Performance Auswertung befindet sich in der Excel Tabelle "Auswertung_Daten_Roundtrip.xlsx" und wurde mit dem Jupyter Notebook "PerformanceTest" erstellt. Hier sind alle Testdaten, sowie zugehörige Diagramme hinterlegt. 
 
 ## P5 – Roundtrip-Path ##
 
