@@ -1,7 +1,7 @@
 ![](banner_roboterprog.png)
 ![banner_roboterprog](https://github.com/maudetroll/RKIM23RobotProgramDS/assets/55143852/bd8dc7ed-b810-44b9-9a9e-70b859f56560)
 
-### RKIM23RobotProgramDS ###
+# RKIM23RobotProgramDS #
 ## Wie werden die Algorithmen ausgeführt?
 
 Im Pfad "02_eigeneNotebooks" die Datei "Roundtrip-Automated_PlanerTest" und ausführen. Standardmäßig werden alle 3 PRM Verfahren mit allen 5 Benchmark-Umgebungen ausgeführt. Für eine übersichtlichere Analyse können einzelne PRM Verfahren auskommentiert werden, sowie die Anzahl der auszuführenden Benchmarks angepasst werden.
@@ -9,20 +9,20 @@ Im Pfad "02_eigeneNotebooks" die Datei "Roundtrip-Automated_PlanerTest" und ausf
 
 <img src="./03_Auswertung/Bilder/ProjektDateistruktur.png" alt="Projekt DateiStruktur" width="300"/>
 
-## Roundtrip-Automated_PlanerTest
+### Roundtrip-Automated_PlanerTest
 In dieser Datei werden die Benchmarks ausgeführt und visualisiert (analog der Vorlage AutomatedPlanerTest).
 
-## Aufgabe2_Optimierung_und_Glaettung
+### Aufgabe2_Optimierung_und_Glaettung
 In dieser Datei befindet sich die Lösung zu Aufgabe 2.
 
-## Auswertung_der_Algorithmen
+### Auswertung_der_Algorithmen
 In dieser Datei befindet sich die Beschreibung der Pfadplanung, sowie die schriftliche Auswertung der Ergebnisse.
 
-## Performance Auswertung
+### Performance Auswertung
 
 Die Performance Auswertung befindet sich in der Excel Tabelle "Auswertung_Daten_Roundtrip.xlsx" und wurde mit dem Jupyter Notebook "PerformanceTest" erstellt. Hier sind alle Testdaten, sowie zugehörige Diagramme hinterlegt. 
 
-## P5 – Roundtrip-Path ##
+## Aufgabenstellung: P5 – Roundtrip-Path ##
 
 Aufgabenstellung:
 
