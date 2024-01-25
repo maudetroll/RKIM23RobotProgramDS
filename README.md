@@ -47,7 +47,7 @@ vergleichen Sie die Ergebnisse.
 
 II. Erläutern Sie bitte zudem im Endbericht:
 
-a.) Wie können Sie die Bewegungsbahnen optimieren/Glätten? Erläutern Sie kurz eine
+Wie können Sie die Bewegungsbahnen optimieren/Glätten? Erläutern Sie kurz eine
 mögliche Vorgehensweise.
 <br>
 Anmerkung: Bitte checken Sie das Notebook „Profiling_pstats_example“ und „IP-X-0-
