@@ -45,7 +45,7 @@ Sie eventuell eine die Art wie Sie den Visibility-PRM aufrufen geschickt veränd
 Führen Sie ebenfalls die Evaluation an den Benchmarkumgebungen durch und
 vergleichen Sie die Ergebnisse.
 
-# II. Erläutern Sie bitte zudem im Endbericht: #
+II. Erläutern Sie bitte zudem im Endbericht:
 
 a.) Wie können Sie die Bewegungsbahnen optimieren/Glätten? Erläutern Sie kurz eine
 mögliche Vorgehensweise.
