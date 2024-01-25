@@ -6,7 +6,9 @@
 
 Im Pfad "02_eigeneNotebooks" die Datei "Roundtrip-Automated_PlanerTest" und ausführen. Standardmäßig werden alle 3 PRM Verfahren mit allen 5 Benchmark-Umgebungen ausgeführt. Für eine übersichtlichere Analyse können einzelne PRM Verfahren auskommentiert werden, sowie die Anzahl der auszuführenden Benchmarks angepasst werden.
 
-![Bildschirmfoto vom 2024-01-18 10-13-17](https://github.com/maudetroll/RKIM23RobotProgramDS/assets/55143852/12c3d39b-07a1-4a34-adcc-2f56813cec21)
+
+<img src="./Bilder/ProjektDateistruktur.png" alt="Projekt DateiStruktur" width="900"/>
+
 
 ## Performance Auswertung
 
