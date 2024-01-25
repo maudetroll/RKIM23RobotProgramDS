@@ -23,7 +23,7 @@ Die Performance Auswertung befindet sich in der Excel Tabelle "Auswertung_Daten_
 
 I. Implementieren Sie einen Roundtrip-Path Planer.
 
-a) Gegeben sind <br><br>
+a) Gegeben sind <br>
 * Startposition <br>
 * Mehrere Endpositionen <br>
 * Das Interface des Roundtrip-Path-Planners soll sich nicht von den anderen
