@@ -2,7 +2,7 @@
 ![banner_roboterprog](https://github.com/maudetroll/RKIM23RobotProgramDS/assets/55143852/bd8dc7ed-b810-44b9-9a9e-70b859f56560)
 
 # RKIM23RobotProgramDS #
-## Wie werden die Algorithmen ausgeführt?
+## Wo befinden sich relevante Informationen?
 
 <img src="./03_Auswertung/Bilder/ProjektDateistruktur.png" alt="Projekt DateiStruktur" width="300"/>
 
