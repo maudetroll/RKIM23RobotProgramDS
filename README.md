@@ -49,6 +49,3 @@ II. Erläutern Sie bitte zudem im Endbericht:
 
 Wie können Sie die Bewegungsbahnen optimieren/Glätten? Erläutern Sie kurz eine
 mögliche Vorgehensweise.
-<br>
-Anmerkung: Bitte checken Sie das Notebook „Profiling_pstats_example“ und „IP-X-0-
-Automated_PlanerTest“ für Profiling und Statistiken.
