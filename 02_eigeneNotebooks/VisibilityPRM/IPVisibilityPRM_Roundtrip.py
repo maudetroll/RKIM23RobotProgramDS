@@ -284,7 +284,7 @@ class VisPRM(PRMBase):
 
                         # Avoid looping by detecting looping pattern
                         
-                        # Check if the length of the 'path' list is greater than 2
+                        # Check if the length of the 'path' list is longer than 2
                         if len(path) > 2:
                             
                             # Check if the last element of 'path' is equal to third last element of 'path'
